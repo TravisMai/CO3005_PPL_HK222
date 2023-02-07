@@ -10,12 +10,59 @@ options{
 	language=Python3;
 }
 
-program:  EOF ;
+program:  			funcDeclList EOF ;
+
+funcDeclList:      	funcDecl funcDeclList | funcDecl ;
+funcDecl: 			ID COLON FUNCTION primitiveType (EXTENDS ID)? funcBody;
+funcBody: 			LP funcBodyDeclList? RP;
+funcBodyDeclList:  	funcBodyDecl+;
+funcBodyDecl:      	attributeDecl |  methodDecl;
+
+methodDecl:         (STATIC? returnType)? ID LB paramList? RB blockStmt;
+paramList:          param SM paramList | param ;
+param:              typeType ids;
+ids:                ID COMMA ids | ID ;
+
+varDecl:            FINAL? typeType variableDeclList SM ;
+attributeDecl:      (STATIC | FINAL | STATIC FINAL | FINAL STATIC)? typeType variableDeclList SM;
+variableDeclList:   variableDeclarator COMMA variableDeclList | variableDeclarator ;
+variableDeclarator: ID ('=' expression)?;
+
+args:               LB expList? RB;
+expList:            expression COMMA expList | expression;
+typeType:           primitiveType | arrayType | funcType ;
+returnType: 		typeType;
+arrayType:          (primitiveType | ID ) LSB INTLIT RSB;
+primitiveType:      INT | FLOAT | BOOLEAN | STRING | VOID ;
+funcType:			ID;
+arrayLit:           LP elemArrays RP;
+elemArrays:         elemArray COMMA elemArrays | elemArray ;
+elemArray:          INTLIT | FLOATLIT | booleanlit | STRINGLIT | NIL | THIS;
+elem:           	INTLIT | FLOATLIT | booleanlit | STRINGLIT | NIL;
+booleanlit:         TRUE | FALSE;
 
 
+statement:		AssStmt SM
+				|ifStmt
+				|forStmt
+				|whileStmt
+				|doWhileStmt SM
+				|breakStmt SM
+				|continueStmt SM
+				|returnStmt SM
+				|callStmt SM
+				|blockStmt;
 
-
-
+AssStmt:		lhs ASS expression;
+ifStmt:			IF expression THEN statement (ELSE statement)?;
+forStmt:		FOR LB ID ASS expression COMMA expression COMMA expression RB statement;
+whileStmt:		WHILE LB expression RB statement;
+doWhileStmt:	DO statement WHILE LB expression RB;
+breakStmt:		BREAK;
+continueStmt:	CONTINUE;
+returnStmt:		RETURN expression;
+callStmt:		ID LB (expression (COMMA expression)*)? RB;
+blockStmt:		LP statement RP;
 // 3.1 Characters set
 
 
@@ -91,28 +138,6 @@ fragment Esc:	'\\' [btnfr"'\\];
 fragment Deci:	'.'[0-9]*;
 fragment Expo: 	('e'|'E') ('+'|'-')?[0-9]+;
 
-// 7 Statements
-/* statement:		AssStmt SM
-				|ifStmt
-				|forStmt
-				|whileStmt
-				|doWhileStmt SM
-				|breakStmt SM
-				|continueStmt SM
-				|returnStmt SM
-				|callStmt SM
-				|blockStmt;
-
-AssStmt:		lhs ASS expression;
-ifStmt:			IF expression THEN statement (ELSE statement)?;
-forStmt:		FOR LB ID ASS expression COMMA expression COMMA expression RB statement;
-whileStmt:		WHILE LB expression RB statement;
-doWhileStmt:	DO statement WHILE LB expression RB;
-breakStmt:		BREAK;
-continueStmt:	CONTINUE;
-returnStmt:		RETURN expression;
-callStmt:		ID LB (expression (COMMA expression)*)? RB;
-blockStmt:		LP statement RP;*/
 
 
 UNCLOSE_STRING: '"' StrCha*  EOF? {
