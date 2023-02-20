@@ -39,6 +39,16 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MT22Parser#varia_no_body.
+    def visitVaria_no_body(self, ctx:MT22Parser.Varia_no_bodyContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MT22Parser#varia_yes_body.
+    def visitVaria_yes_body(self, ctx:MT22Parser.Varia_yes_bodyContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MT22Parser#args.
     def visitArgs(self, ctx:MT22Parser.ArgsContext):
         return self.visitChildren(ctx)
@@ -59,13 +69,13 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#primitiveType.
-    def visitPrimitiveType(self, ctx:MT22Parser.PrimitiveTypeContext):
+    # Visit a parse tree produced by MT22Parser#funcType.
+    def visitFuncType(self, ctx:MT22Parser.FuncTypeContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#funcType.
-    def visitFuncType(self, ctx:MT22Parser.FuncTypeContext):
+    # Visit a parse tree produced by MT22Parser#variType.
+    def visitVariType(self, ctx:MT22Parser.VariTypeContext):
         return self.visitChildren(ctx)
 
 
