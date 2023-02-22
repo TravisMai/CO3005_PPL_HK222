@@ -1,1 +1,1 @@
-Error on line 1 col 3: interger
+Error on line 2 col 20: if

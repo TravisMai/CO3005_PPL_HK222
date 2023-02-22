@@ -410,12 +410,13 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(input, expect, 197))
     
     def test_LS198(self):
-        input = "12.0100e3"
-        expect = "12.0100e3,<EOF>"
+        input = """ a:array [5] of integer;
+                    a = {1,2,3,4,5};"""
+        expect = """a,:,array,[,5,],of,integer,;,a,=,{,1,,,2,,,3,,,4,,,5,},;,<EOF>"""
         self.assertTrue(TestLexer.test(input, expect, 198))
     
     def test_LS199(self):
-        self.assertTrue(TestLexer.test(""" "He asked me: Where is John?" """, """He asked me: Where is John?,<EOF>""", 199))    
+        self.assertTrue(TestLexer.test(""" "He asked me: Where is Le Tuan Hung?" """, """He asked me: Where is Le Tuan Hung?,<EOF>""", 199))    
 
     def test_LS200(self):
         self.assertTrue(TestLexer.test(""" "abvc\bcd" """, """abvc\bcd,<EOF>""", 200))    

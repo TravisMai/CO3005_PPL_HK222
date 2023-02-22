@@ -16,25 +16,31 @@ program: (funcDeclList | variableDeclList)* EOF;
 
 funcDeclList: funcDecl funcDeclList | funcDecl;
 funcDecl:
-	ID COLON FUNCTION funcType LB (OUT? variaFuncList)? RB blockStmt;
+	ID COLON FUNCTION funcType LB (variaFuncList)? RB (
+		INHERIT ID
+	)? blockStmt;
+
 variaFuncList:
 	variaFuncDeclarator COMMA variaFuncList
 	| variaFuncDeclarator;
-variaFuncDeclarator: ID COLON typeType;
+variaFuncDeclarator: INHERIT? OUT? ID COLON typeType;
 
 variableDeclList: (varia_yes_body | varia_no_body) SM;
 
-varia_no_body: ID COMMA varia_no_body | ID COLON variType;
+varia_no_body:
+	ID COMMA varia_no_body
+	| ID COLON (variType | arrayType);
 
 varia_yes_body:
 	ID COMMA varia_yes_body COMMA expression
-	| ID COLON variType ASS expression;
+	| ID COLON (variType | arrayType) ASS expression;
 
 args: LB expList? RB;
 expList: expression COMMA expList | expression;
 
-typeType: funcType | arrayType ;
-arrayType: (funcType | ID) LSB INTEGERLIT RSB;
+typeType: funcType | arrayType;
+arrayType:
+	ARRAY LSB INTEGERLIT (COMMA INTEGERLIT)? RSB OF variType;
 funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID;
 variType: INTEGER | FLOAT | BOOLEAN | STRING;
 
@@ -60,7 +66,9 @@ breakStmt: BREAK;
 continueStmt: CONTINUE;
 returnStmt: RETURN expression;
 callStmt: ID LB (expression (COMMA expression)*)? RB;
-blockStmt: LCB variableDeclList* statement* RCB;
+blockStmt: LCB blockStmtbody? RCB;
+blockStmtbody: (variableDeclList | statement) blockStmtbody
+	| (variableDeclList | statement);
 
 expression:
 	expression1 (GT | LT | GTE | LTE) expression1
@@ -142,9 +150,10 @@ ASS: '=';
 LINE_CMT: '//' ~[\r\n]* -> skip;
 BLOCK_CMT: '/*' .*? '*/' -> skip;
 
-// 3.7 Literals
+// 3.7 Literals 12_12345
 WS: [ \t\r\n]+ -> skip; // skip spaces, tabs, newlines
-INTEGERLIT: ([1-9][0-9_]* | '0')+ {self.text = self.text.replace("_","")};
+INTEGERLIT: ('0' | [1-9][0-9]* ('_'[0-9])*)+ {self.text = self.text.replace("_","")};
+//INTEGERLIT: ([1-9][0-9_]* | '0')+ {self.text = self.text.replace("_","")};
 FLOATLIT: ('0' | [1-9][0-9_]*)+ (Deci | Deci? Expo) {self.text = self.text.replace("_","")};
 booleanlit: TRUE | FALSE;
 
