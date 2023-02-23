@@ -148,8 +148,8 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 221))
 
     def test_PS222(self):
-        input = """"""
-        expect = ""
+        input = """+"""
+        expect = "Error on line 1 col 0: +"
         self.assertTrue(TestParser.test(input, expect, 222))
 
     def test_PS223(self):
