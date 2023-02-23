@@ -152,9 +152,10 @@ BLOCK_CMT: '/*' .*? '*/' -> skip;
 
 // 3.7 Literals 12_12345
 WS: [ \t\r\n]+ -> skip; // skip spaces, tabs, newlines
-INTEGERLIT: ('0' | [1-9][0-9]* ('_'[0-9])*)+ {self.text = self.text.replace("_","")};
+INTEGERLIT: ('0' | [1-9][0-9]* ('_'[0-9] | [0-9])*) {self.text = self.text.replace("_","")};
+FLOATLIT: (INTEGERLIT (Deci | Deci? Expo) | Deci Expo ) {self.text = self.text.replace("_","")};
 //INTEGERLIT: ([1-9][0-9_]* | '0')+ {self.text = self.text.replace("_","")};
-FLOATLIT: ('0' | [1-9][0-9_]*)+ (Deci | Deci? Expo) {self.text = self.text.replace("_","")};
+// FLOATLIT: ('0' | [1-9][0-9_]*)+ (Deci | Deci? Expo) {self.text = self.text.replace("_","")};
 booleanlit: TRUE | FALSE;
 
 STRINGLIT: ('"' StrCha? '"') {self.text = self.text[1:-1]};
@@ -173,12 +174,12 @@ ID: [a-zA-Z_][a-zA-Z0-9_]*;
 UNCLOSE_STRING:
 	'"' StrCha* EOF? {
 	y = str(self.text)
-	raise UncloseString(y[0:])
+	raise UncloseString(y[1:])
 };
 ILLEGAL_ESCAPE:
 	'"' StrCha* ('\\' ~[bfrnt"\\]) {
 	y = str(self.text)
-	raise IllegalEscape(y[0:])
+	raise IllegalEscape(y[1:])
 };
 ERROR_CHAR:
 	.{

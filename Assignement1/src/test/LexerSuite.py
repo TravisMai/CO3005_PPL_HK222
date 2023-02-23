@@ -60,7 +60,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_LS119(self):
         input = """ "hjhasdfasdk\n" """
-        expect = """Unclosed String: "hjhasdfasdk"""
+        expect = """Unclosed String: hjhasdfasdk"""
         self.assertTrue(TestLexer.test(input,expect,119))
 
     def test_LS120(self):
@@ -76,7 +76,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("auto break do else", "auto,break,do,else,<EOF>", 123))
 
     def test_LS124(self):
-        self.assertTrue(TestLexer.test(""" abc \" def """, """abc,Unclosed String: " def """, 124))
+        self.assertTrue(TestLexer.test(""" abc \" def """, """abc,Unclosed String:  def """, 124))
 
     def test_LS125(self):
         self.assertTrue(TestLexer.test("abc + -", "abc,+,-,<EOF>", 125))
@@ -91,10 +91,10 @@ class LexerSuite(unittest.TestCase):
          self.assertTrue(TestLexer.test("! == & != && * % $ ... ","!,==,Error Token &",128)) 
     
     def test_LS129(self):
-        self.assertTrue(TestLexer.test(""" 1+1>=2+2 \"**dfshg324+\\^ def\" ""","""1,+,1,>=,2,+,2,Illegal Escape In String: "**dfshg324+\^""",129))
+        self.assertTrue(TestLexer.test(""" 1+1>=2+2 \"**dfshg324+\\^ def\" ""","""1,+,1,>=,2,+,2,Illegal Escape In String: **dfshg324+\^""",129))
     
     def test_LS130(self):
-        self.assertTrue(TestLexer.test("""  \"\\!asdgqwetrew\" ""","""Illegal Escape In String: "\!""",130))
+        self.assertTrue(TestLexer.test("""  \"\\!asdgqwetrew\" ""","""Illegal Escape In String: \!""",130))
     
     def test_LS131(self):
         self.assertTrue(TestLexer.test("!a!=%53245&&b||a123+*", "!,a,!=,%,53245,&&,b,||,a123,+,*,<EOF>", 131))
@@ -142,7 +142,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("ExpoWeanaSFSst part ", "ExpoWeanaSFSst,part,<EOF>", 145))
 
     def test_LS146(self):
-        self.assertTrue(TestLexer.test(""" ",cxvbcvb\\12" """, """Illegal Escape In String: ",cxvbcvb\\1""", 146))
+        self.assertTrue(TestLexer.test(""" ",cxvbcvb\\12" """, """Illegal Escape In String: ,cxvbcvb\\1""", 146))
 
     def test_LS147(self):
         input = "F88 + nha - 40 > 12"
@@ -230,7 +230,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_LS162(self):
         input = """ \"dsfg\\e def\" """
-        expect = """Illegal Escape In String: "dsfg\\e"""
+        expect = """Illegal Escape In String: dsfg\\e"""
         self.assertTrue(TestLexer.test(input, expect, 162))
     
     def test_LS163(self):
@@ -255,12 +255,12 @@ class LexerSuite(unittest.TestCase):
 
     def test_LS167(self):
         input = """a= "No one said: " Hello " \n ";"""
-        expect = """a,=,No one said: ,Hello,Unclosed String: " """
+        expect = """a,=,No one said: ,Hello,Unclosed String:  """
         self.assertTrue(TestLexer.test(input, expect, 167))
 
     def test_LS168(self):
         input = """aa = "Hello \n world !";"""
-        expect = """aa,=,Unclosed String: "Hello """
+        expect = """aa,=,Unclosed String: Hello """
         self.assertTrue(TestLexer.test(input, expect, 168))
 
     def test_LS169(self):
@@ -305,7 +305,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_LS177(self):
         input = """ " \\wqe " """
-        expect = """Illegal Escape In String: " \w"""
+        expect = """Illegal Escape In String:  \w"""
         self.assertTrue(TestLexer.test(input, expect, 177))
 
     def test_LS178(self):
@@ -320,7 +320,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_LS180(self):
         input = """>">"""
-        expect = """>,Unclosed String: ">"""
+        expect = """>,Unclosed String: >"""
         self.assertTrue(TestLexer.test(input, expect, 180))
 
     def test_LS181(self):
@@ -355,28 +355,28 @@ class LexerSuite(unittest.TestCase):
 
     def test_LS187(self):
         input = """ "dshf"""
-        expect = """Unclosed String: "dshf"""
+        expect = """Unclosed String: dshf"""
         self.assertTrue(TestLexer.test(input, expect, 187))
 
     def test_LS188(self):
         input = """ {/*"*/*"}*/*"""
-        expect = """{,*,Unclosed String: "}*/*"""
+        expect = """{,*,Unclosed String: }*/*"""
         self.assertTrue(TestLexer.test(input, expect, 188))
 
     def test_LS189(self):
         input = """vbnm"-a)
                     " """
-        expect = """vbnm,Unclosed String: "-a)"""
+        expect = """vbnm,Unclosed String: -a)"""
         self.assertTrue(TestLexer.test(input, expect, 189))
 
     def test_LS190(self):
         input = """ "abc\\x" """
-        expect = """Illegal Escape In String: "abc\\x"""
+        expect = """Illegal Escape In String: abc\\x"""
         self.assertTrue(TestLexer.test(input, expect, 190))
 
     def test_LS191(self):
         input = """ "\\n\\ " """
-        expect = """Illegal Escape In String: "\\n\\ """
+        expect = """Illegal Escape In String: \\n\\ """
         self.assertTrue(TestLexer.test(input, expect, 191))
 
     def test_LS192(self):
