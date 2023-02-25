@@ -42,7 +42,7 @@ typeType: funcType | arrayType;
 arrayType:
 	ARRAY LSB INTEGERLIT (COMMA INTEGERLIT)? RSB OF variType;
 funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID;
-variType: INTEGER | FLOAT | BOOLEAN | STRING;
+variType: INTEGER | FLOAT | BOOLEAN | STRING | AUTO;
 
 statement:
 	assStmt SM
@@ -70,13 +70,13 @@ blockStmt: LCB blockStmtbody? RCB;
 blockStmtbody: (variableDeclList | statement) blockStmtbody
 	| (variableDeclList | statement);
 
-expression:
-	expression1 (GT | LT | GTE | LTE) expression1
-	| expression1;
+expression: expression (AND | OR) expression1 | expression1;
 expression1:
-	expression2 (EQUAL | NEQUAL) expression2
+	expression1 (GT | LT | GTE | LTE) expression2
 	| expression2;
-expression2: expression2 (AND | OR) expression3 | expression3;
+expression2:
+	expression2 (EQUAL | NEQUAL) expression3
+	| expression3;
 expression3: expression3 (ADD | SUB) expression4 | expression4;
 expression4:
 	expression4 (MUL | DIV | MOD) expression5
@@ -152,10 +152,10 @@ BLOCK_CMT: '/*' .*? '*/' -> skip;
 
 // 3.7 Literals 12_12345
 WS: [ \t\r\n]+ -> skip; // skip spaces, tabs, newlines
-INTEGERLIT: ('0' | [1-9][0-9]* ('_'[0-9] | [0-9])*) {self.text = self.text.replace("_","")};
-FLOATLIT: (INTEGERLIT (Deci | Deci? Expo) | Deci Expo ) {self.text = self.text.replace("_","")};
-//INTEGERLIT: ([1-9][0-9_]* | '0')+ {self.text = self.text.replace("_","")};
-// FLOATLIT: ('0' | [1-9][0-9_]*)+ (Deci | Deci? Expo) {self.text = self.text.replace("_","")};
+INTEGERLIT: ('0' | [1-9][0-9]* ('_' [0-9] | [0-9])*) {self.text = self.text.replace("_","")};
+FLOATLIT: (INTEGERLIT (Deci | Deci? Expo) | Deci Expo) {self.text = self.text.replace("_","")};
+//INTEGERLIT: ([1-9][0-9_]* | '0')+ {self.text = self.text.replace("_","")}; FLOATLIT: ('0' |
+// [1-9][0-9_]*)+ (Deci | Deci? Expo) {self.text = self.text.replace("_","")};
 booleanlit: TRUE | FALSE;
 
 STRINGLIT: ('"' StrCha? '"') {self.text = self.text[1:-1]};
@@ -177,7 +177,7 @@ UNCLOSE_STRING:
 	raise UncloseString(y[1:])
 };
 ILLEGAL_ESCAPE:
-	'"' StrCha* ('\\' ~[bfrnt"\\]) {
+	'"' StrCha* ('\\' ~[bfrnt"'\\]) {
 	y = str(self.text)
 	raise IllegalEscape(y[1:])
 };

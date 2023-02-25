@@ -416,7 +416,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(input, expect, 198))
     
     def test_LS199(self):
-        self.assertTrue(TestLexer.test(""" "He asked me: Where is Le Tuan Hung?" """, """He asked me: Where is Le Tuan Hung?,<EOF>""", 199))    
+        self.assertTrue(TestLexer.test(""" "He asked me: Where is Mai Huu Nghia?" """, """He asked me: Where is Mai Huu Nghia?,<EOF>""", 199))    
 
     def test_LS200(self):
         self.assertTrue(TestLexer.test(""" "abvc\bcd" """, """abvc\bcd,<EOF>""", 200))    

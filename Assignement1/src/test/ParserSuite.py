@@ -153,8 +153,8 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 222))
 
     def test_PS223(self):
-        input = """"""
-        expect = ""
+        input = """main: function void () {x:auto = 5;}"""
+        expect = "successful"
         self.assertTrue(TestParser.test(input, expect, 223))
 
     def test_PS224(self):
