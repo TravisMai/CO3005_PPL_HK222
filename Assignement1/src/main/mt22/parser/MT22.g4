@@ -38,7 +38,7 @@ varia_yes_body:
 args: LB expList? RB;
 expList: espresso COMMA expList | espresso;
 
-typeType: funcType | arrayType;
+typeType: funcType | arrayType | variType;
 arrayType:
 	ARRAY LSB INTEGERLIT (COMMA INTEGERLIT)? RSB OF variType;
 funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID;

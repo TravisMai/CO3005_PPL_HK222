@@ -1,2 +1,2 @@
  /* A C-style comment */
-                    a: integer = 5; // A C++ style comment
+                    emches : integer = 5635465; // A C++ style comment

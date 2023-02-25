@@ -1,7 +1,10 @@
  emches : integer = 5635465;
                     main: function void () {
                         do {
-                            a = a + 1
+                            a = b < c;
+                            a = b > c;
+                            a = b <= c;
+                            a = b >= c;
                         } while (a < 10);
                     }
                 

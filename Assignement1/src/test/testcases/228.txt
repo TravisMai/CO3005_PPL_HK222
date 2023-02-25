@@ -1,4 +1,4 @@
- a: integer = 5;
+ emches : integer = 5635465;
                     main: function void () {
                         do {
                             a = a + 1;

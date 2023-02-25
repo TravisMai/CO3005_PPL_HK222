@@ -1,0 +1,11 @@
+ emches : integer = 5635465;
+                    main: function void () {
+                        do {
+                            a = b :: d :: t::e:: c;/*
+                            a = b - c;
+                            a = b * c;
+                            a = b / c;
+                            a = b % c;*/
+                        } while (a < 10);
+                    }
+                
