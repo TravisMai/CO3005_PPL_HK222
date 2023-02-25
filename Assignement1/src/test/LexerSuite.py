@@ -411,8 +411,9 @@ class LexerSuite(unittest.TestCase):
     
     def test_LS198(self):
         input = """ a:array [5] of integer;
+        /*
                     a = {1,2,3,4,5};"""
-        expect = """a,:,array,[,5,],of,integer,;,a,=,{,1,,,2,,,3,,,4,,,5,},;,<EOF>"""
+        expect = """a,:,array,[,5,],of,integer,;,Unterminated Comment: /*"""
         self.assertTrue(TestLexer.test(input, expect, 198))
     
     def test_LS199(self):

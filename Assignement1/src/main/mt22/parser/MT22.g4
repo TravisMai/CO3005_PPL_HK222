@@ -185,3 +185,8 @@ ERROR_CHAR:
 	.{
 	raise ErrorToken(self.text)
 };
+UNTERMINATED_COMMENT:
+	'/*' .*? {
+	y = str(self.text)
+	raise UnterminatedComment(y[0:])
+};
