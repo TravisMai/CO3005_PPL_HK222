@@ -1,0 +1,7 @@
+ a: integer = 5;
+                    main: function void () {
+                        while (z <= a) {
+                            z = z + 1;
+                        }
+                    }
+                

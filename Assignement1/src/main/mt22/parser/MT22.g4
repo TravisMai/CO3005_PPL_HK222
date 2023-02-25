@@ -32,11 +32,11 @@ varia_no_body:
 	| ID COLON (variType | arrayType);
 
 varia_yes_body:
-	ID COMMA varia_yes_body COMMA expression
-	| ID COLON (variType | arrayType) ASS expression;
+	ID COMMA varia_yes_body COMMA espresso
+	| ID COLON (variType | arrayType) ASS espresso;
 
 args: LB expList? RB;
-expList: expression COMMA expList | expression;
+expList: espresso COMMA expList | espresso;
 
 typeType: funcType | arrayType;
 arrayType:
@@ -56,42 +56,42 @@ statement:
 	| callStmt SM
 	| blockStmt;
 
-assStmt: lhs ASS expression;
-ifStmt: IF LB expression RB statement (ELSE statement)?;
+assStmt: lhs ASS espresso;
+ifStmt: IF LB espresso RB statement (ELSE statement)?;
 forStmt:
-	FOR LB ID ASS expression COMMA expression COMMA expression RB statement;
-whileStmt: WHILE LB expression RB statement;
-doWhileStmt: DO statement WHILE LB expression RB;
+	FOR LB ID ASS espresso COMMA espresso COMMA espresso RB statement;
+whileStmt: WHILE LB espresso RB statement;
+doWhileStmt: DO statement WHILE LB espresso RB;
 breakStmt: BREAK;
 continueStmt: CONTINUE;
-returnStmt: RETURN expression;
-callStmt: ID LB (expression (COMMA expression)*)? RB;
+returnStmt: RETURN espresso;
+callStmt: ID LB (espresso (COMMA espresso)*)? RB;
 blockStmt: LCB blockStmtbody? RCB;
 blockStmtbody: (variableDeclList | statement) blockStmtbody
 	| (variableDeclList | statement);
 
-expression: expression (AND | OR) expression1 | expression1;
-expression1:
-	expression1 (GT | LT | GTE | LTE) expression2
-	| expression2;
-expression2:
-	expression2 (EQUAL | NEQUAL) expression3
-	| expression3;
-expression3: expression3 (ADD | SUB) expression4 | expression4;
-expression4:
-	expression4 (MUL | DIV | MOD) expression5
-	| expression5;
-expression5: expression5 CONCAT expression6 | expression6;
-expression6: NOT expression6 | expression7;
-expression7: (ADD | SUB) expression7 | expression8;
-expression8: expression9 LSB expression RSB | expression9;
-expression9:
-	expression9 DOT ID args
-	| expression10
-	| expression9 DOT ID;
-expression10: ID args | expression11;
-expression11: elem | arrayLit | LB expression RB | ID;
-lhs: ID | expression9 DOT ID | expression9 LSB expression RSB;
+espresso: espresso (AND | OR) espresso1 | espresso1;
+espresso1:
+	espresso1 (GT | LT | GTE | LTE) espresso2
+	| espresso2;
+espresso2: espresso2 (EQUAL | NEQUAL) espresso3 | espresso3;
+espresso3: espresso3 (ADD | SUB) espresso4 | espresso4;
+espresso4: espresso4 (MUL | DIV | MOD) espresso5 | espresso5;
+espresso5: espresso5 CONCAT espresso6 | espresso6;
+espresso6: NOT espresso6 | espresso7;
+espresso7: (ADD | SUB) espresso7 | espresso8;
+espresso8: espresso9 LSB espresso RSB | espresso9;
+espresso9:
+	espresso9 DOT ID args
+	| espresso10
+	| espresso9 DOT ID;
+espresso10: ID args | espresso11;
+espresso11: elem | arrayLit | LB espresso RB | ID;
+espresso12: elem COMMA espresso12 | elem;
+lhs:
+	ID
+	| espresso9 DOT ID
+	| espresso9 LSB (espresso12 | lhs) RSB;
 
 // 3.4 Keywords
 AUTO: 'auto';

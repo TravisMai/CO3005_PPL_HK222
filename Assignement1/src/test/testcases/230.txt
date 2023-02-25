@@ -1,7 +1,9 @@
  a: integer = 5;
                     main: function void () {
                         for (i = 1, i < a, i + 1) {
-                            writeInt(i);
+                            if (i % 2 == 0){
+                                result: integer = 2 + 3 * 4 / (5 - 1);
+                            }
                         }
                     }
                 
