@@ -68,7 +68,7 @@ class ParserSuite(unittest.TestCase):
 
     def test_PS209(self):
         input = """ /* A C-style comment */
-                    emches : integer = 5635465; // A C++ style comment"""
+                    emches : integer = 2052612; // A C++ style comment"""
         expect = "successful"
         self.assertTrue(TestParser.test(input, expect, 209))
 
@@ -176,7 +176,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 225))
 
     def test_PS226(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         while (z <= a) {
                             z = z + 1;
@@ -187,7 +187,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 226))
 
     def test_PS227(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         for (i = 1, i < a, i + 1) {
                             writeInt(i);
@@ -198,7 +198,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 227))
 
     def test_PS228(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         do {
                             a = a + 1;
@@ -209,7 +209,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 228))
 
     def test_PS229(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         do {
                             a = a + 1
@@ -220,7 +220,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 229))
 
     def test_PS230(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         for (i = 1, i < a, i + 1) {
                             if (i % 2 == 0){
@@ -233,7 +233,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 230))
 
     def test_PS231(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         for (i = 1, i < a, i + 1) {
                             if (i % 2 == 0){
@@ -247,7 +247,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 231))
 
     def test_PS232(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         for (i = 1, i < a, i + 1) {
                             if (i % 2 == 0){
@@ -269,7 +269,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 232))
 
     def test_PS233(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         for (i = 1, i < a, i + 1) {
                             if (i % 2 == 0){
@@ -473,7 +473,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 245))
 
     def test_PS246(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         while (z <= a) {
                             if (z % a != 5){
@@ -510,7 +510,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 248))
 
     def test_PS249(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         do {
                             a = b < c;
@@ -524,7 +524,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 249))
 
     def test_PS250(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         do {
                             a = b + c;
@@ -539,7 +539,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 250))
 
     def test_PS251(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         do {
                             a = b && c;
@@ -551,9 +551,9 @@ class ParserSuite(unittest.TestCase):
                 """
         expect = "successful"
         self.assertTrue(TestParser.test(input, expect, 251))
-    
+
     def test_PS252(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         do {
                             a = b :: d :: t::e:: c;/*
@@ -568,7 +568,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 252))
 
     def test_PS253(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         do {
                             a = !b;/*
@@ -583,7 +583,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 253))
 
     def test_PS254(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function void () {
                         do {
                             a = b == c;
@@ -616,7 +616,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 255))
 
     def test_PS256(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function boolean () {
                         while (z <= a) {
                             if (z % a != 5){
@@ -642,7 +642,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 257))
 
     def test_PS258(self):
-        input = """ a: boolean = true;
+        input = r""" a: boolean = true;
                     print: function string (){
                         do{
                             printString("hehe");
@@ -650,11 +650,11 @@ class ParserSuite(unittest.TestCase):
                         return "hehe";
                     }
                 """
-        expect = "successful"
+        expect = r"successful"
         self.assertTrue(TestParser.test(input, expect, 258))
 
     def test_PS259(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function float () {
                         do {
                             a = b < c;
@@ -669,7 +669,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.test(input, expect, 259))
 
     def test_PS260(self):
-        input = """ emches : integer = 5635465;
+        input = """ emches : integer = 2052612;
                     main: function float () {
                         board[43252345] = {
                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -688,4 +688,501 @@ class ParserSuite(unittest.TestCase):
         expect = "successful"
         self.assertTrue(TestParser.test(input, expect, 260))
 
-        
+    def test_PS261(self):
+        input = r""" emches : integer = 2052612;
+                    main: function void () {
+                        c: integer = !((a==b) && (c>=d) != 5 || -(absfc || (c<=d)));
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 261))
+
+    def test_PS262(self):
+        input = r""" emches : integer = 2052612;
+                    main: function void () {
+                        m,n: integer;
+                        c: integer = !(a && b || c);
+                        a: boolean = -(!a + c*2322/5234 + b%2234 + !(a == foo())) ;
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 262))
+
+    def test_PS263(self):
+        input = r""" emches : float = dsaf(a,b,c,a+c,a[foo()+2*5/3]);"""
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 263))
+
+    def test_PS264(self):
+        input = """ emches : integer = 2052612;
+                    main: function void () {
+                        do {
+                            b: array [2] of string = {1,2,3,4,true,5.e4};
+                            foo(a,s,d,f,g,h,j,k);
+                        } while (a < 10);
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 264))
+
+    def test_PS265(self):
+        input = """ emches: function void () {
+                        a: string = stringconcat();
+                        if ((a && a+a && a-a) != "awsedaw"){
+                            ba[2,3] = 3rdty;
+                        }
+                    }"""
+        expect = "Error on line 4 col 39: rdty"
+        self.assertTrue(TestParser.test(input, expect, 265))
+
+    def test_PS266(self):
+        input = """ emches : integer = 2052612;
+                    main: function boolean () {
+                        dividend, divisor: integer = 25,4;
+
+                        quotient: integer = dividend / divisor;
+                        remainder:integer = dividend % divisor;
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 266))
+
+    def test_PS267(self):
+        input = """ a: boolean = !true;
+                    print: function integer (){
+                        hehe(hsdad(asdasd(SAdasD(ASdasd()))));
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 267))
+
+    def test_PS268(self):
+        input = r""" a: boolean = true;
+                    print: function string (){
+                        arra[asdasd[dsadsasd[sadsaddas[sadsadasd[sadasd[asdas[asd[asd[sad[sad[asd[12311233123213_3213231_123]]]]]]]]]]]]=1;
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 268))
+
+    def test_PS269(self):
+        input = """ emches : integer = 2052612;
+                    main: function float () {
+                        {}{}{}{}{}{}{}{}{}{}
+                        do {a = b < c;a = b > c;a = b <= c;a = b >= c;} while (a < 10);
+                        return a;
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 269))
+
+    def test_PS270(self):
+        input = """ emches : integer = 2052612;
+                    main: function float () {/*
+                        board[43252345] = {
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        };*/
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 270))
+
+    def test_PS271(self):
+        input = r""" emches : integer = 2052612;
+                    //
+                    main: function void () {
+                    /*
+                            c: integer = !((a==b) && (c>=d) != 5 || -(absfc || (c<=d)));
+                    }
+                """
+        expect = r"Error on line 4 col 20: /"
+        self.assertTrue(TestParser.test(input, expect, 271))
+
+    def test_PS272(self):
+        input = r""" emches : integer = 2052612;
+                    main: function void () {
+                        m/*,n*/: integer = 12.12e-1;
+                        c: integer = !(a && b || c || d || e||f||g||h||j||k||l);
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 272))
+
+    def test_PS273(self):
+        input = r""" emches : void = dsaf(a,b,c,a+c,a[foo()+2*5/3]);"""
+        expect = r"Error on line 1 col 10: void"
+        self.assertTrue(TestParser.test(input, expect, 273))
+
+    def test_PS274(self):
+        input = """ emches : float = 56.35465;
+                    main: function void () {
+                        do {
+                            b: array [2] of string = {1};
+                        } while (a < 10);
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 274))
+
+    def test_PS275(self):
+        input = """ emches: function void () {
+                        a: string = stringconcat();
+                        if ((a && a+a && a-a) != "sdfgsdfg"){}
+                    }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 275))
+
+    def test_PS276(self):
+        input = """ emches : integer = 2052612;
+                    fib: function void(n:integer) {
+                        if (n <= 1) return n ;
+                        else return fib(n-1) + fib(n-2);
+                    }
+                    print: function void (){
+                        print(fib(3));
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 276))
+
+    def test_PS277(self):
+        input = """ max: function void(a: integer, b:integer) {
+                        if (a > b) return a; 
+                        else return b;
+                    }
+                    print: function void (){
+                        print(max(3, 4));
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 277))
+
+    def test_PS278(self):
+        input = r""" emches : integer = 2052612;
+                    main: function float () {
+                        do {do {do {do {do {do {do {a = b < c;a = b > c;a = b <= c;a = b >= c;} while (a < 4);} while (a < 5);} while (a < 6);} while (a < 7);} while (a < 8);} while (a < 9);} while (a < 10);
+                        return a;
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 278))
+
+    def test_PS279(self):
+        input = """ emches : integer = 2052612;
+                    main: function float () {
+                        {}{}{}{}{}{//}{}{}{}{}
+                        do {a = b < c;a = b > c;a = b <= c;a = b >= c;} while (a < 10);
+                        return a;
+                    }
+                """
+        expect = "Error on line 7 col 16: <EOF>"
+        self.assertTrue(TestParser.test(input, expect, 279))
+
+    def test_PS280(self):
+        input = """ emches : integer = 2052612;
+                    main: function float () {/*
+                        board[43252345] = {
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        };*/
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 280))
+
+    def test_PS281(self):
+        input = r""" emches : integer = 2052612;
+                    //
+                    main: function void () {
+                        if (a < b && c < d || e > f && g > h && i <= j || k >= l && m != n) {x=1;} else {x=2;}
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 281))
+
+    def test_PS282(self):
+        input = r""" emches : integer = 2052612;
+                    main: function void () {
+                        if (a < b && c < d && e > f || g > h && i <= j && k >= l || m != n && o == p) {x=1;} else {x=2;}
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 282))
+
+    def test_PS283(self):
+        input = r""" emches : integer = 2052612;
+                    main: function void () {
+                        while(i < 10 || j > 5) {i = i + 1; j = j - 1;}
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 283))
+
+    def test_PS284(self):
+        input = """ emches : integer = 2052612;
+                    main: function void () {
+                        while(i < 10) {while(i < 9) {while(i < 8) {while(i < 7) {while(i < 6) {while(i < 5) {while(i < 4) {while(i < 3) {while(i < 2) {while(i < 1) {while(i < 0) {i = i + 1; j = j - 1;}}}}}}}}}}}
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 284))
+
+    def test_PS285(self):
+        input = """ emches: function void () {
+                        for (i = 1, i <= 10, i+2) { while (j < i && k >= 0) { j=j+1; k=k-1; } }
+                    }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 285))
+
+    def test_PS286(self):
+        input = """ print: function void (){
+                        if ((x > 0 || y < 0) && !(x > 0 && y < 0)) { for (i = 0, i < 10, i+2) { if (i % 2 == 0 || i % 3 == 0) { continue; } j=j+2; } }
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 286))
+
+    def test_PS287(self):
+        input = """ print: function void (){
+                        while (i < 10 && j > 0 && k != 5) { if ((i + j + k) % 2 == 0) { j=j-1; k=k+1; } else { i=i+1; k=k-1; } if (j == 0 || k == 0) { break; } }
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 287))
+
+    def test_PS288(self):
+        input = r""" emches : integer = 2052612;
+                    main: function float () {
+                        if (a || b && c && !d || e && (f || g)) { for (i = 0, i < 10, i+1) { if (i % 2 == 0 && i % 3 == 0) { continue; } j=j+1; } }
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 288))
+
+    def test_PS289(self):
+        input = """ main: function float () {
+                        emches1 : float = 2052612;
+                        do {a = b < c;a = b > c;a = b <= c;a = b >= c;} while (a < 10);
+                        emches : integer = 2052612;
+                        return a;
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 289))
+
+    def test_PS290(self):
+        input = """ emches : integer = 2052612;
+                    main: function float () {
+                        for (i=1,i<=6,i+1) {
+                            if (i % 2 == 0 || i == 5) {
+                                continue;
+                            }
+                            while (j <= i) {
+                                if (j == 2 && k < 5) {
+                                    break;
+                                } else {
+                                    continue;
+                                }
+                                print("i:", i, "j:", j, "k:", k);
+                            }
+                        }
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 290))
+
+    def test_PS291(self):
+        input = r""" emches : integer = 2052612;
+                    //
+                    main: function void () {
+                        if (a >= 10 && b < 5 || c != 3) {
+                            for (i=1,i<=6,i+1) {
+                                if (i == 2 || i == 3) {
+                                    continue;
+                                }
+                                while (j < i) {
+                                    if (j == 2 && k > 0) {
+                                        break;
+                                    } else {
+                                        continue;
+                                    }
+                                    print("i:", i, "j:", j, "k:", k);
+                                }
+                            }
+                        } else {
+                            print("a is not greater than or equal to 10 and b is not less than 5 or c is equal to 3");
+                        }
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 291))
+
+    def test_PS292(self):
+        input = r""" emches : integer = 2052612;
+                    main: function void () {
+                        if (! (a == 1 || b == 2) && c != 3){
+                            for (i=1,i<=6,i+1){
+                                while (j < 10){
+                                    if (k == 4 && l != 5){
+                                        
+                                    }
+                                }
+                            }                            
+                        }else  break;
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 292))
+
+    def test_PS293(self):
+        input = r""" emches : integer = 2052612;
+                    main: function void () {
+                        if ((2+2) == 4 && (3*3) > 8) {
+                            x: integer = 0;
+                            for (i = 0, i < 5, i+1) {
+                                while (x < 10) {
+                                    x=x+1;
+                                    if (x % 2 == 0 || x == 5) {
+                                        continue;
+                                    } else{
+                                        break;
+                                    }/* else {
+                                        x = x *2;
+                                    }*/
+                                }
+                            }
+                        }
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 293))
+
+    def test_PS294(self):
+        input = """ emches : integer = 2052612;
+                    main: function void () {
+                        a:integer  = 10;
+                        b:integer = 20;
+                        if (a != b || (a > b && b != 0)) {
+                            for (i = 0, i < 5, i+1) {
+                                c: integer = i * 2;
+                                while (c > 0) {
+                                    c=c-1;
+                                    if (c % 3 == 0 && c != 6) {
+                                        continue;
+                                    } else {
+                                        c = 2;
+                                    }
+                                }
+                            }
+                        } else {
+                            do {
+                                a=a+1;
+                            } while (a < 100);
+                        }
+    
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 294))
+
+    def test_PS295(self):
+        input = """ emches: function void () {
+                        a,b,c: integer = 10,20,30;
+                        if ((a < b || b > c) && (c < a || a > b)) {
+                            for (i = 0, i < 5, i+1){
+                                d: integer = i * 3;
+                                while (d < 20) {
+                                    if (d % 5 == 0 || d == 11) {
+                                        continue;
+                                    } else {
+                                        d=d-1;
+                                    }
+                                }
+                            }
+                        } else {
+                            do {
+                                c = 5;
+                            } while (c > 0);
+                        }
+
+                    }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 295))
+
+    def test_PS296(self):
+        input = """ emches : integer = 2052612;
+                    fib: function void(n:integer) {
+                        if (n == 1 || n == 0)  
+                        else{
+                            a,b : integer = 0,1;
+                            for ( i = 2, i < n+1, i+1 ){
+                                c = a + b;
+                                a = b;
+                                b = c;
+                            }
+                            return b;
+                        }
+                    }
+                    print: function void (){
+                        print(fib(3+1));
+                    }
+                """
+        expect = "Error on line 4 col 24: else"
+        self.assertTrue(TestParser.test(input, expect, 296))
+
+    def test_PS297(self):
+        input = """ emches : integer = 2052612;
+                    fib: function void(n:integer) {
+                        if (n == 1 || n == 0) {} 
+                        else{
+                            a,b : integer = 0,1;
+                            for ( i = 2, i < n+1, i+1 ){
+                                c = a + b;
+                                a = b;
+                                b = c;
+                            }
+                            return b;
+                        }
+                    }
+                    print: function void (){
+                        print(fib(3+1));
+                    }
+                """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 297))
+
+    def test_PS298(self):
+        input = r""" emches : integer = 2052612;
+                    count_vowels: function void(str: string){
+                        vowels[5] = {"a", "e", "i", "o", "u"};
+                        count: integer = 0;
+                        return count;
+                    }
+                    main: function float () {
+                        result = count_vowels("Hello, World!");
+                    }
+                """
+        expect = r"successful"
+        self.assertTrue(TestParser.test(input, expect, 298))
+
+    def test_PS299(self):
+        input = """ main: function float () {
+                        emches1 : float = 2052612;
+                        do {a = b < ca = b > ca = b <= ca = b >= c;} while (a < 10);
+                        emches : integer = 2052612;
+                        return a;
+                    }
+                """
+        expect = "Error on line 3 col 39: ="
+        self.assertTrue(TestParser.test(input, expect, 299))
+
+    def test_PS300(self):
+        """Simple program: int main() {} """
+        input = """test: string = "depressed";
+                    stringconcat:  function string () {
+                        for ( i = 0, i <= 10, i + 1){
+                            concattest = test ::: "z" :: "asd" :: "sadasd";
+                        }
+                        return concattest;
+                    }"""
+        expect = "Error on line 4 col 48: :"
+        self.assertTrue(TestParser.test(input, expect, 300))

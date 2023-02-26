@@ -3,6 +3,7 @@ grammar MT22;
 // 2052612 MAI HUU NGHIA
 @lexer::header {
 from lexererr import *
+# 2052612 MAI HUU NGHIA
 }
 
 @parser::members {
@@ -173,20 +174,20 @@ ID: [a-zA-Z_][a-zA-Z0-9_]*;
 
 UNCLOSE_STRING:
 	'"' StrCha* EOF? {
-	y = str(self.text)
-	raise UncloseString(y[1:])
+y = str(self.text)
+raise UncloseString(y[1:])
 };
 ILLEGAL_ESCAPE:
 	'"' StrCha* ('\\' ~[bfrnt"'\\]) {
-	y = str(self.text)
-	raise IllegalEscape(y[1:])
+y = str(self.text)
+raise IllegalEscape(y[1:])
 };
 ERROR_CHAR:
 	.{
-	raise ErrorToken(self.text)
+raise ErrorToken(self.text)
 };
-UNTERMINATED_COMMENT:
-	'/*' .*? {
-	y = str(self.text)
-	raise UnterminatedComment(y[0:])
-};
+// UNTERMINATED_COMMENT:
+// 	'/*' .*? {
+// 	y = str(self.text)
+// 	raise UnterminatedComment(y[0:])
+// };

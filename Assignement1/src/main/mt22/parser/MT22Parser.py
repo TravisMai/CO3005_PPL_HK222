@@ -11,7 +11,7 @@ else:
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3<")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3;")
         buf.write("\u01d4\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
@@ -254,7 +254,7 @@ class MT22Parser ( Parser ):
                       "RB", "LSB", "RSB", "DOT", "COMMA", "SM", "COLON", 
                       "LCB", "RCB", "ASS", "LINE_CMT", "BLOCK_CMT", "WS", 
                       "INTEGERLIT", "FLOATLIT", "STRINGLIT", "ID", "UNCLOSE_STRING", 
-                      "ILLEGAL_ESCAPE", "ERROR_CHAR", "UNTERMINATED_COMMENT" ]
+                      "ILLEGAL_ESCAPE", "ERROR_CHAR" ]
 
     RULE_program = 0
     RULE_funcDeclList = 1
@@ -371,7 +371,6 @@ class MT22Parser ( Parser ):
     UNCLOSE_STRING=55
     ILLEGAL_ESCAPE=56
     ERROR_CHAR=57
-    UNTERMINATED_COMMENT=58
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
