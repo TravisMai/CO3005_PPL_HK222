@@ -13,7 +13,7 @@ options {
 	language = Python3;
 }
 
-program: (funcDeclList | variableDeclList)* EOF;
+program: (funcDeclList | variableDeclList)+ EOF;
 
 funcDeclList: funcDecl funcDeclList | funcDecl;
 funcDecl:
@@ -41,8 +41,8 @@ expList: espresso COMMA expList | espresso;
 
 typeType: funcType | arrayType | variType;
 arrayType:
-	ARRAY LSB INTEGERLIT (COMMA INTEGERLIT)? RSB OF variType;
-funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID;
+	ARRAY LSB INTEGERLIT (COMMA INTEGERLIT)* RSB OF variType;
+funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID | AUTO | arrayType;
 variType: INTEGER | FLOAT | BOOLEAN | STRING | AUTO;
 
 statement:
@@ -65,7 +65,7 @@ whileStmt: WHILE LB espresso RB statement;
 doWhileStmt: DO statement WHILE LB espresso RB;
 breakStmt: BREAK;
 continueStmt: CONTINUE;
-returnStmt: RETURN espresso;
+returnStmt: RETURN espresso?;
 callStmt: ID LB (espresso (COMMA espresso)*)? RB;
 blockStmt: LCB blockStmtbody? RCB;
 blockStmtbody: (variableDeclList | statement) blockStmtbody
@@ -81,18 +81,12 @@ espresso4: espresso4 (MUL | DIV | MOD) espresso5 | espresso5;
 espresso5: espresso5 CONCAT espresso6 | espresso6;
 espresso6: NOT espresso6 | espresso7;
 espresso7: (ADD | SUB) espresso7 | espresso8;
-espresso8: espresso9 LSB espresso RSB | espresso9;
-espresso9:
-	espresso9 DOT ID args
-	| espresso10
-	| espresso9 DOT ID;
+espresso8: espresso10 LSB espresso (COMMA espresso)* RSB | espresso10;
 espresso10: ID args | espresso11;
 espresso11: elem | arrayLit | LB espresso RB | ID;
 espresso12: elem COMMA espresso12 | elem;
-lhs:
-	ID
-	| espresso9 DOT ID
-	| espresso9 LSB (espresso12 | lhs) RSB;
+lhs: ID | lhsop;
+lhsop: ID LSB (espresso12 | lhsop) RSB;
 
 // 3.4 Keywords
 AUTO: 'auto';
@@ -160,9 +154,9 @@ FLOATLIT: (INTEGERLIT (Deci | Deci? Expo) | Deci Expo) {self.text = self.text.re
 booleanlit: TRUE | FALSE;
 
 STRINGLIT: ('"' StrCha? '"') {self.text = self.text[1:-1]};
-arrayLit: LCB elemArrays RCB;
-elemArrays: elemArray COMMA elemArrays | elemArray;
-elemArray: INTEGERLIT | FLOATLIT | booleanlit | STRINGLIT;
+arrayLit: LCB elemArrays? RCB;
+elemArrays: espresso COMMA elemArrays | espresso;
+// elemArray: INTEGERLIT | FLOATLIT | booleanlit | STRINGLIT;
 elem: INTEGERLIT | FLOATLIT | booleanlit | STRINGLIT;
 fragment StrCha: (~["\\\r\n] | Esc)+;
 fragment Esc: '\\' [btnfr"'\\];
@@ -186,8 +180,4 @@ ERROR_CHAR:
 	.{
 raise ErrorToken(self.text)
 };
-// UNTERMINATED_COMMENT:
-// 	'/*' .*? {
-// 	y = str(self.text)
-// 	raise UnterminatedComment(y[0:])
-// };
+// UNTERMINATED_COMMENT: '/*' .*? { y = str(self.text) raise UnterminatedComment(y[0:]) };

@@ -94,7 +94,7 @@ class ParserSuite(unittest.TestCase):
 
     def test_PS214(self):
         input = """// A C++ style comment"""
-        expect = "successful"
+        expect = "Error on line 1 col 22: <EOF>"
         self.assertTrue(TestParser.test(input, expect, 214))
 
     def test_PS215(self):
@@ -104,12 +104,12 @@ class ParserSuite(unittest.TestCase):
 
     def test_PS216(self):
         input = """/* A C++ style comment */"""
-        expect = "successful"
+        expect = "Error on line 1 col 25: <EOF>"
         self.assertTrue(TestParser.test(input, expect, 216))
 
     def test_PS217(self):
         input = """"""
-        expect = "successful"
+        expect = "Error on line 1 col 0: <EOF>"
         self.assertTrue(TestParser.test(input, expect, 217))
 
     def test_PS218(self):

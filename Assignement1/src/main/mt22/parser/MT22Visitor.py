@@ -184,11 +184,6 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#espresso9.
-    def visitEspresso9(self, ctx:MT22Parser.Espresso9Context):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by MT22Parser#espresso10.
     def visitEspresso10(self, ctx:MT22Parser.Espresso10Context):
         return self.visitChildren(ctx)
@@ -209,6 +204,11 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MT22Parser#lhsop.
+    def visitLhsop(self, ctx:MT22Parser.LhsopContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MT22Parser#booleanlit.
     def visitBooleanlit(self, ctx:MT22Parser.BooleanlitContext):
         return self.visitChildren(ctx)
@@ -221,11 +221,6 @@ class MT22Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by MT22Parser#elemArrays.
     def visitElemArrays(self, ctx:MT22Parser.ElemArraysContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by MT22Parser#elemArray.
-    def visitElemArray(self, ctx:MT22Parser.ElemArrayContext):
         return self.visitChildren(ctx)
 
 
