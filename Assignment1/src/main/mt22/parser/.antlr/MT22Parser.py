@@ -1,4 +1,4 @@
-# Generated from c:\Users\EmChes\OneDrive - wtpvf\Documents\GitHub\CO3005_PPL_HK222\Assignement1\src\main\mt22\parser\MT22.g4 by ANTLR 4.9.2
+# Generated from c:\Users\EmChes\OneDrive - wtpvf\Documents\GitHub\CO3005_PPL_HK222\Assignment1\src\main\mt22\parser\MT22.g4 by ANTLR 4.9.2
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
