@@ -1,1 +1,1 @@
-a, b, c: integer = 3, 4, 6;
+x,y,t: integer = 65, 97, 87;
