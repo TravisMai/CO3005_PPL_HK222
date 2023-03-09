@@ -13,8 +13,9 @@ options {
 	language = Python3;
 }
 
-program: (funcDeclList | variableDeclList)+ EOF;
+program: declare+ EOF;
 
+declare: funcDeclList | variableDeclList;
 funcDeclList: funcDecl funcDeclList | funcDecl;
 funcDecl:
 	ID COLON FUNCTION funcType LB (variaFuncList)? RB (
@@ -40,8 +41,8 @@ args: LB expList? RB;
 expList: espresso COMMA expList | espresso;
 
 typeType: funcType | arrayType | variType;
-arrayType:
-	ARRAY LSB INTEGERLIT (COMMA INTEGERLIT)* RSB OF variType;
+arrayType: ARRAY LSB arraySize RSB OF variType;
+arraySize: INTEGERLIT COMMA arraySize | INTEGERLIT ;
 funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID | AUTO | arrayType;
 variType: INTEGER | FLOAT | BOOLEAN | STRING | AUTO;
 
@@ -66,7 +67,8 @@ doWhileStmt: DO statement WHILE LB espresso RB;
 breakStmt: BREAK;
 continueStmt: CONTINUE;
 returnStmt: RETURN espresso?;
-callStmt: ID LB (espresso (COMMA espresso)*)? RB;
+callStmt: ID LB callEsp? RB;
+callEsp: espresso COMMA callEsp | espresso;
 blockStmt: LCB blockStmtbody? RCB;
 blockStmtbody: (variableDeclList | statement) blockStmtbody
 	| (variableDeclList | statement);
@@ -145,12 +147,10 @@ ASS: '=';
 LINE_CMT: '//' ~[\r\n]* -> skip;
 BLOCK_CMT: '/*' .*? '*/' -> skip;
 
-// 3.7 Literals 12_12345
+// 3.7 Literals 
 WS: [ \t\r\n]+ -> skip; // skip spaces, tabs, newlines
 INTEGERLIT: ('0' | [1-9][0-9]* ('_' [0-9] | [0-9])*) {self.text = self.text.replace("_","")};
 FLOATLIT: (INTEGERLIT (Deci | Deci? Expo) | Deci Expo) {self.text = self.text.replace("_","")};
-//INTEGERLIT: ([1-9][0-9_]* | '0')+ {self.text = self.text.replace("_","")}; FLOATLIT: ('0' |
-// [1-9][0-9_]*)+ (Deci | Deci? Expo) {self.text = self.text.replace("_","")};
 booleanlit: TRUE | FALSE;
 
 STRINGLIT: ('"' StrCha? '"') {self.text = self.text[1:-1]};

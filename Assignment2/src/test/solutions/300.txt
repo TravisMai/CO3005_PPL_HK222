@@ -1,1 +1,3 @@
-Error on line 4 col 48: :
+Program([
+	IntegerType
+])
