@@ -1,1 +1,0 @@
-same,format,as,<EOF>

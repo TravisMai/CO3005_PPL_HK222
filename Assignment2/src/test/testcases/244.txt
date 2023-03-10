@@ -1,4 +1,0 @@
- var1, var2: integer = 42, 84;
-                    var3: string = "hello";
-                    var4: auto = var1 + var2;
-                    

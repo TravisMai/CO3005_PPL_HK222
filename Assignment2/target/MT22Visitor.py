@@ -14,6 +14,11 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MT22Parser#declares.
+    def visitDeclares(self, ctx:MT22Parser.DeclaresContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MT22Parser#declare.
     def visitDeclare(self, ctx:MT22Parser.DeclareContext):
         return self.visitChildren(ctx)

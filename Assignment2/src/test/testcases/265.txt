@@ -1,6 +1,0 @@
- emches: function void () {
-                        a: string = stringconcat();
-                        if ((a && a+a && a-a) != "awsedaw"){
-                            ba[2,3] = 3rdty;
-                        }
-                    }

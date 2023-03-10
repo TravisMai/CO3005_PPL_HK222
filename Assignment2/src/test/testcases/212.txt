@@ -1,1 +1,0 @@
-a: void = 5; // A C++ style comment

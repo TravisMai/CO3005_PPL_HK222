@@ -13,7 +13,9 @@ options {
 	language = Python3;
 }
 
-program: declare+ EOF;
+program: declares EOF;
+
+declares: declare declares | declare;
 
 declare: funcDeclList | variableDeclList;
 funcDeclList: funcDecl funcDeclList | funcDecl;
@@ -27,11 +29,11 @@ variaFuncList:
 	| variaFuncDeclarator;
 variaFuncDeclarator: INHERIT? OUT? ID COLON typeType;
 
-variableDeclList: (varia_yes_body | varia_no_body) SM;
+variableDeclList: (varia_yes_body | (varia_no_body COLON (variType | arrayType)) ) SM;
 
 varia_no_body:
 	ID COMMA varia_no_body
-	| ID COLON (variType | arrayType);
+	| ID ;
 
 varia_yes_body:
 	ID COMMA varia_yes_body COMMA espresso

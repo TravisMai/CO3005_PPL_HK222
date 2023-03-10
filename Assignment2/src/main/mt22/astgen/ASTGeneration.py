@@ -5,12 +5,18 @@ from functools import *
 
 
 class ASTGeneration(MT22Visitor):
-    # program: declare+ EOF;
+    # program: declares EOF;
     def visitProgram(self, ctx: MT22Parser.ProgramContext):
         # declareList = [self.visit(i) for i in ctx.declare()]
         # return Program([reduce(lambda a, b: a+b, declareList)])
-        declareList = list(reduce(lambda x, y: x + [self.visit(y)], [i for i in ctx.declare()], []))
-        return Program(declareList)
+        # declareList = list(reduce(lambda x, y: x + [self.visit(y)], [i for i in ctx.declare()], []))
+        return Program(self.visit(ctx.declares()))
+
+    # declares: declare declares | declare;
+    def visitDeclares (self, ctx:MT22Parser.DeclaresContext):
+        if ctx.declares():
+            return list(self.visit(ctx.declare()))+ self.visit(ctx.declares())
+        return list(self.visit(ctx.declare()))
 
     # declare: funcDeclList | variableDeclList;
     def visitDeclare(self, ctx: MT22Parser.DeclareContext):
@@ -33,7 +39,7 @@ class ASTGeneration(MT22Visitor):
         if ctx.INHERIT(): 
             inherit = Id(ctx.ID(1).getText())
         else: inherit = None
-        return FuncDecl(name, return_type, params, inherit, body)
+        return [FuncDecl(name, return_type, params, inherit, body)]
 
     # variaFuncList: variaFuncDeclarator COMMA variaFuncList | variaFuncDeclarator;
     def visitVariaFuncList(self, ctx: MT22Parser.VariaFuncListContext):
@@ -51,12 +57,18 @@ class ASTGeneration(MT22Visitor):
         if ctx.OUT(): out = True
         return ParamDecl(name, typ, out, inherit)
 
-    # variableDeclList: (varia_yes_body | varia_no_body) SM;
+    # variableDeclList: (varia_yes_body | (varia_no_body COLON (variType | arrayType)) ) SM;
     def visitVariableDeclList(self, ctx:MT22Parser.VariableDeclListContext):
-        if ctx.varia_yes_body(): return self.visit(ctx.varia_yes_body())
-        elif ctx.varia_no_body(): return self.visit(ctx.varia_no_body())
+        if ctx.varia_no_body():
+            variNo = self.visit(ctx.varia_no_body())
+            variNotyp = self.visit(ctx.variType()) if ctx.variType() else self.visit(ctx.arrayType())
+            return [VarDecl(x, variNotyp, None) for x in variNo]
 
-    # varia_no_body: ID COMMA varia_no_body | ID COLON (variType | arrayType);
+    # varia_no_body: ID COMMA varia_no_body | ID ;
+    def visitVaria_no_body(self, ctx:MT22Parser.Varia_no_bodyContext):
+        if ctx.varia_no_body(): 
+            return [ctx.ID().getText()] + self.visit(ctx.varia_no_body())
+        return [ctx.ID().getText()]
 
     # varia_yes_body: ID COMMA varia_yes_body COMMA espresso | ID COLON (variType | arrayType) ASS espresso;
 

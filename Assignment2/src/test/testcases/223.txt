@@ -1,1 +1,0 @@
-main: function void () {x:auto = 5;}

@@ -1,3 +1,0 @@
-Program([
-	FuncDecl(Id(main), VoidType, [], None, [<AST.CallStmt object at 0x00000243E85AE680>])
-])

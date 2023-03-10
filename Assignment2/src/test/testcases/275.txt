@@ -1,4 +1,0 @@
- emches: function void () {
-                        a: string = stringconcat();
-                        if ((a && a+a && a-a) != "sdfgsdfg"){}
-                    }
