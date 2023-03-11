@@ -85,7 +85,7 @@ espresso4: espresso4 (MUL | DIV | MOD) espresso5 | espresso5;
 espresso5: espresso5 CONCAT espresso6 | espresso6;
 espresso6: NOT espresso6 | espresso7;
 espresso7: (ADD | SUB) espresso7 | espresso8;
-espresso8: espresso10 LSB espresso (COMMA espresso)* RSB | espresso10;
+espresso8: espresso10 LSB expList RSB | espresso10;
 espresso10: ID args | espresso11;
 espresso11: elem | arrayLit | LB espresso RB | ID;
 espresso12: espresso12 COMMA elem | elem;

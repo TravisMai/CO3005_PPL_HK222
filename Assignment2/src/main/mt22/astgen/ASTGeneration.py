@@ -29,12 +29,12 @@ class ASTGeneration(MT22Visitor):
     
     # funcDecl: ID COLON FUNCTION funcType LB (variaFuncList)? RB ( INHERIT ID )? blockStmt;
     def visitFuncDecl(self, ctx:MT22Parser.FuncDeclContext):
-        name = Id(ctx.ID(0).getText())
+        name = ctx.ID(0).getText() #Id or not ?
         return_type = self.visit(ctx.funcType())
         params = self.visit(ctx.variaFuncList()) if ctx.variaFuncList() else []
         body = self.visit(ctx.blockStmt())
         if ctx.INHERIT(): 
-            inherit = Id(ctx.ID(1).getText())
+            inherit = ctx.ID(1).getText() #Id or not ?
         else: inherit = None
         return [FuncDecl(name, return_type, params, inherit, body)]
 
@@ -48,7 +48,7 @@ class ASTGeneration(MT22Visitor):
     def visitVariaFuncDeclarator (self, ctx:MT22Parser.VariaFuncDeclaratorContext):
         inherit = False
         out = False
-        name = Id(ctx.ID().getText())
+        name = ctx.ID().getText() #Id or not ?
         typ = self.visit(ctx.typeType())
         if ctx.INHERIT(): inherit = True
         if ctx.OUT(): out = True
@@ -161,7 +161,7 @@ class ASTGeneration(MT22Visitor):
 
     # forStmt: FOR LB ID ASS espresso COMMA espresso COMMA espresso RB statement;
     def visitForStmt(self, ctx:MT22Parser.ForStmtContext):
-        id = Id(ctx.ID().getText())
+        id = ctx.ID().getText() #Id or not ?
         initStmt = self.visit(ctx.espresso(0))
         AssSt = AssignStmt(id, initStmt)
         expr1 = self.visit(ctx.espresso(1))
@@ -198,7 +198,7 @@ class ASTGeneration(MT22Visitor):
     # callStmt: ID LB callEsp? RB;
     def visitCallStmt(self, ctx: MT22Parser.CallStmtContext):
         callEspress = self.visit(ctx.callEsp()) if ctx.callEsp() else []
-        id = Id(ctx.ID().getText())
+        id = ctx.ID().getText() #Id or not ?
         return CallStmt(id, callEspress)
     
     # callEsp: espresso COMMA callEsp | espresso;
@@ -209,7 +209,7 @@ class ASTGeneration(MT22Visitor):
     
     # blockStmt: LCB blockStmtbody? RCB;
     def visitBlockStmt(self, ctx: MT22Parser.BlockStmtContext):
-        return self.visit(ctx.blockStmtbody()) if ctx.blockStmtbody() else []
+        return BlockStmt(self.visit(ctx.blockStmtbody()) if ctx.blockStmtbody() else [])
 
     # blockStmtbody: (variableDeclList | statement) blockStmtbody | (variableDeclList | statement);
     def visitBlockStmtbody(self, ctx:MT22Parser.BlockStmtbodyContext):
@@ -287,13 +287,18 @@ class ASTGeneration(MT22Visitor):
         val = self.visit(ctx.espresso7())
         return UnExpr(op, val)
 
-    # espresso8: espresso10 LSB espresso (COMMA espresso)* RSB | espresso10;
-    # def visitEspresso8(self, ctx: MT22Parser.Espresso8Context):
+    # espresso8: espresso10 LSB expList RSB | espresso10;
+    def visitEspresso8(self, ctx: MT22Parser.Espresso8Context):
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.espresso10())
+        arr = self.visit(ctx.espresso10())
+        idx = self.visit(ctx.expList())
+        return ArrayCell(arr, idx)
 
     # espresso10: ID args | espresso11;
     def visitEspresso10(self, ctx: MT22Parser.Espresso10Context):
         if ctx.args():
-            name = Id(ctx.ID().getText())
+            name = ctx.ID().getText() #Id or not ?
             args = self.visit(ctx.args())
             return FuncCall(name,args)
         return self.visit(ctx.espresso11())
@@ -303,7 +308,7 @@ class ASTGeneration(MT22Visitor):
         if ctx.elem(): return self.visit(ctx.elem())
         elif ctx.arrayLit(): return self.visit(ctx.arrayLit())
         elif ctx.espresso(): return self.visit(ctx.espresso())
-        elif ctx.ID(): return Id(ctx.ID().getText())
+        elif ctx.ID(): return ctx.ID().getText() #Id or not ?
     
     # espresso12: espresso12 COMMA elem | elem;
     def visitEspresso12(self, ctx: MT22Parser.Espresso12Context):
@@ -319,6 +324,11 @@ class ASTGeneration(MT22Visitor):
             return self.visit(ctx.lhsop())
 
     # lhsop: ID LSB (espresso12 | lhsop) RSB;
+    def visitLhsop(self, ctx:MT22Parser.LhsopContext):
+        ids = Id(ctx.ID().getText())
+        cell = [self.visit(ctx.espresso12()) if ctx.espresso12() else self.visit(ctx.lhsop())]
+        return ArrayCell(ids,cell)
+    
     # arrayLit: LCB elemArrays? RCB;
     def visitArrayLit(self, ctx: MT22Parser.ArrayLitContext):
         return ArrayLit(self.visit(ctx.elemArrays())) if ctx.elemArrays() else None
