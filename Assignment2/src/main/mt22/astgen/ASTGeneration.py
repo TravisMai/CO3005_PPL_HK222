@@ -7,9 +7,6 @@ from functools import *
 class ASTGeneration(MT22Visitor):
     # program: declares EOF;
     def visitProgram(self, ctx: MT22Parser.ProgramContext):
-        # declareList = [self.visit(i) for i in ctx.declare()]
-        # return Program([reduce(lambda a, b: a+b, declareList)])
-        # declareList = list(reduce(lambda x, y: x + [self.visit(y)], [i for i in ctx.declare()], []))
         return Program(self.visit(ctx.declares()))
 
     # declares: declare declares | declare;
@@ -63,6 +60,14 @@ class ASTGeneration(MT22Visitor):
             variNo = self.visit(ctx.varia_no_body())
             variNotyp = self.visit(ctx.variType()) if ctx.variType() else self.visit(ctx.arrayType())
             return [VarDecl(x, variNotyp, None) for x in variNo]
+        elif ctx.varia_yes_body():
+            variYes = self.visit(ctx.varia_yes_body())
+            mid_index = len(variYes) // 2
+            yesId = variYes[:mid_index]
+            yesEss = variYes[mid_index+1:]
+            yesTyp = variYes[mid_index]
+            combined = [[str(a), str(b)] for a, b in zip(yesId, yesEss)]
+            return [VarDecl(x[0], yesTyp, x[1]) for x in combined]
 
     # varia_no_body: ID COMMA varia_no_body | ID ;
     def visitVaria_no_body(self, ctx:MT22Parser.Varia_no_bodyContext):
@@ -71,6 +76,10 @@ class ASTGeneration(MT22Visitor):
         return [ctx.ID().getText()]
 
     # varia_yes_body: ID COMMA varia_yes_body COMMA espresso | ID COLON (variType | arrayType) ASS espresso;
+    def visitVaria_yes_body(self, ctx:MT22Parser.Varia_yes_bodyContext):
+        if ctx.varia_yes_body(): 
+            return [ctx.ID().getText()] + self.visit(ctx.varia_yes_body()) + [self.visit(ctx.espresso())]
+        return [ctx.ID().getText()] + [self.visit(ctx.variType()) if ctx.variType() else self.visit(ctx.arrayType())] + [self.visit(ctx.espresso())]
 
     # args: LB expList? RB;
     def visitArgs(self, ctx: MT22Parser.ArgsContext):
@@ -93,8 +102,15 @@ class ASTGeneration(MT22Visitor):
 
     # arrayType: ARRAY LSB arraySize RSB OF variType;
     def visitArrayType( self, ctx: MT22Parser.ArrayTypeContext):
+        dimens = self.visit(ctx.arraySize())
         arrType = self.visit(ctx.variType())
+        return ArrayType(dimens,arrType)
              
+    # arraySize: INTEGERLIT COMMA arraySize | INTEGERLIT ;
+    def visitArraySize(self, ctx:MT22Parser.ArraySizeContext):
+        if ctx.arraySize():
+            return [int(ctx.INTEGERLIT().getText())] + self.visit(ctx.arraySize())
+        return [int(ctx.INTEGERLIT().getText())]                    
 
     # funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID | AUTO | arrayType;
     def visitFuncType(self, ctx: MT22Parser.FuncTypeContext):
@@ -111,7 +127,7 @@ class ASTGeneration(MT22Visitor):
         elif ctx.AUTO():
             return AutoType()
         elif ctx.arrayType():
-            return self.visit(ctx.ArrayType())
+            return self.visit(ctx.arrayType())
 
     # variType: INTEGER | FLOAT | BOOLEAN | STRING | AUTO;
     def visitVariType(self, ctx: MT22Parser.VariTypeContext):
@@ -275,6 +291,13 @@ class ASTGeneration(MT22Visitor):
     # def visitEspresso8(self, ctx: MT22Parser.Espresso8Context):
 
     # espresso10: ID args | espresso11;
+    def visitEspresso10(self, ctx: MT22Parser.Espresso10Context):
+        if ctx.args():
+            name = Id(ctx.ID().getText())
+            args = self.visit(ctx.args())
+            return FuncCall(name,args)
+        return self.visit(ctx.espresso11())
+
     # espresso11: elem | arrayLit | LB espresso RB | ID;
     def visitEspresso11(self, ctx:MT22Parser.Espresso11Context):
         if ctx.elem(): return self.visit(ctx.elem())
