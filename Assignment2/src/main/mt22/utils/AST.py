@@ -135,6 +135,8 @@ class StringLit(Expr):
     def __init__(self, val: str):
         self.val = val
 
+    # def __str__(self):
+    #     return "StringLit({})".format(self.val)
 
 class BooleanLit(Expr):
     def __init__(self, val: bool):

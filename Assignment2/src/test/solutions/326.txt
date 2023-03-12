@@ -1,0 +1,3 @@
+Program([
+	FuncDecl(emches, VoidType, [], None, BlockStmt([ForStmt(AssignStmt(i, IntegerLit(1)), BinExpr(<=, i, IntegerLit(10)), BinExpr(+, i, IntegerLit(2)), BlockStmt([WhileStmt(BinExpr(&&, BinExpr(<, j, i), BinExpr(>=, k, IntegerLit(0))), BlockStmt([AssignStmt(Id(j), BinExpr(+, j, IntegerLit(1))), AssignStmt(Id(k), BinExpr(-, k, IntegerLit(1)))]))]))]))
+])

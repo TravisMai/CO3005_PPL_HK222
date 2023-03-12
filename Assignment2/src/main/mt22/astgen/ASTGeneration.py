@@ -348,7 +348,7 @@ class ASTGeneration(MT22Visitor):
         elif ctx.booleanlit():
             return self.visit(ctx.booleanlit())
         elif ctx.STRINGLIT():
-            return StringLit(ctx.STRINGLIT().getText())
+            return StringLit(str(ctx.STRINGLIT().getText()))
 
     # booleanlit: TRUE | FALSE;
     def visitBooleanlit(self, ctx: MT22Parser.BooleanlitContext):

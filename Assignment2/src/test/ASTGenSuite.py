@@ -371,3 +371,124 @@ class ASTGenSuite(unittest.TestCase):
 	FuncDecl(mna, VoidType, [Param(a, IntegerType), Param(b, IntegerType), Param(c, IntegerType), Param(d, StringType), Param(e, BooleanType)], None, BlockStmt([AssignStmt(Id(a), IntegerLit(0)), AssignStmt(Id(b), IntegerLit(0)), ForStmt(AssignStmt(a, IntegerLit(5)), BinExpr(<=, a, IntegerLit(10)), BinExpr(+, a, IntegerLit(1)), BlockStmt([ForStmt(AssignStmt(b, IntegerLit(15)), BinExpr(>=, b, IntegerLit(1)), BinExpr(-, b, IntegerLit(1)), BlockStmt([ForStmt(AssignStmt(c, IntegerLit(0)), BinExpr(>=, c, UnExpr(-, IntegerLit(10))), BinExpr(-, c, IntegerLit(1)), BlockStmt([IfStmt(BinExpr(==, c, IntegerLit(0)), BlockStmt([IfStmt(BinExpr(==, d, IntegerLit(75)), BlockStmt([IfStmt(BinExpr(==, e, BooleanLit(False)), BlockStmt([AssignStmt(Id(d), UnExpr(!, d))]))]))]))]))]))]))]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 322))
+        
+    def test_AST323(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function void () {
+            while (z <= a_5) {
+                z = z + 1;
+            }
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([WhileStmt(BinExpr(<=, z, a_5), BlockStmt([AssignStmt(Id(z), BinExpr(+, z, IntegerLit(1)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 323))
+        
+    def test_AST324(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        emches : integer = 2052612;
+        main: function void () {
+            while (z <= a) {
+                if (z % a != 5){
+                    printString(hehe);
+                    continue;
+                }
+                z = z + 1;
+            }
+        }"""
+        expect = """Program([
+	VarDecl(emches, IntegerType, IntegerLit(2052612))
+	FuncDecl(main, VoidType, [], None, BlockStmt([WhileStmt(BinExpr(<=, z, a), BlockStmt([IfStmt(BinExpr(!=, BinExpr(%, z, a), IntegerLit(5)), BlockStmt([CallStmt(printString, hehe), ContinueStmt()])), AssignStmt(Id(z), BinExpr(+, z, IntegerLit(1)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 324))
+        
+    def test_AST325(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function void () {
+            while(i < 10) {while(i < 9) {while(i < 8) {while(i < 7) {while(i < 6) {while(i < 5) {while(i < 4) {while(i < 3) {while(i < 2) {while(i < 1) {while(i < 0) {i = i + 1; j = j - 1;}}}}}}}}}}}
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(10)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(9)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(8)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(7)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(6)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(5)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(4)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(3)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(2)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(1)), BlockStmt([WhileStmt(BinExpr(<, i, IntegerLit(0)), BlockStmt([AssignStmt(Id(i), BinExpr(+, i, IntegerLit(1))), AssignStmt(Id(j), BinExpr(-, j, IntegerLit(1)))]))]))]))]))]))]))]))]))]))]))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 325))
+        
+    def test_AST326(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        emches: function void () {
+            for (i = 1, i <= 10, i+2) { while (j < i && k >= 0) { j=j+1; k=k-1; } }
+        }"""
+        expect = """Program([
+	FuncDecl(emches, VoidType, [], None, BlockStmt([ForStmt(AssignStmt(i, IntegerLit(1)), BinExpr(<=, i, IntegerLit(10)), BinExpr(+, i, IntegerLit(2)), BlockStmt([WhileStmt(BinExpr(&&, BinExpr(<, j, i), BinExpr(>=, k, IntegerLit(0))), BlockStmt([AssignStmt(Id(j), BinExpr(+, j, IntegerLit(1))), AssignStmt(Id(k), BinExpr(-, k, IntegerLit(1)))]))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 326))
+        
+    def test_AST327(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        print: function void (){
+            while (i < 10 && j > 0 && k != 5) { 
+                if ((i + j + k) % 2 == 0) { 
+                    j=j-1; k=k+1; 
+                } 
+                else { 
+                    i=i+1; 
+                    k=k-1; 
+                } 
+                if (j == 0 || k == 0) break;  
+            }
+        }"""
+        expect = """Program([
+	FuncDecl(print, VoidType, [], None, BlockStmt([WhileStmt(BinExpr(&&, BinExpr(&&, BinExpr(<, i, IntegerLit(10)), BinExpr(>, j, IntegerLit(0))), BinExpr(!=, k, IntegerLit(5))), BlockStmt([IfStmt(BinExpr(==, BinExpr(%, BinExpr(+, BinExpr(+, i, j), k), IntegerLit(2)), IntegerLit(0)), BlockStmt([AssignStmt(Id(j), BinExpr(-, j, IntegerLit(1))), AssignStmt(Id(k), BinExpr(+, k, IntegerLit(1)))]), BlockStmt([AssignStmt(Id(i), BinExpr(+, i, IntegerLit(1))), AssignStmt(Id(k), BinExpr(-, k, IntegerLit(1)))])), IfStmt(BinExpr(||, BinExpr(==, j, IntegerLit(0)), BinExpr(==, k, IntegerLit(0))), BreakStmt())]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 327))
+        
+    def test_AST328(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function void () {
+            if ((2+2) == 4 && (3*3) > 8) {
+                x: integer = 0;
+                for (i = 0, i < 5, i+1) {
+                    while (x < 10) {
+                        x=x+1;
+                        if (x % 2 == 0 || x == 5) {
+                            continue;
+                        } else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([IfStmt(BinExpr(&&, BinExpr(==, BinExpr(+, IntegerLit(2), IntegerLit(2)), IntegerLit(4)), BinExpr(>, BinExpr(*, IntegerLit(3), IntegerLit(3)), IntegerLit(8))), BlockStmt([VarDecl(x, IntegerType, IntegerLit(0)), ForStmt(AssignStmt(i, IntegerLit(0)), BinExpr(<, i, IntegerLit(5)), BinExpr(+, i, IntegerLit(1)), BlockStmt([WhileStmt(BinExpr(<, x, IntegerLit(10)), BlockStmt([AssignStmt(Id(x), BinExpr(+, x, IntegerLit(1))), IfStmt(BinExpr(||, BinExpr(==, BinExpr(%, x, IntegerLit(2)), IntegerLit(0)), BinExpr(==, x, IntegerLit(5))), BlockStmt([ContinueStmt()]), BlockStmt([BreakStmt()]))]))]))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 328))
+        
+    def test_AST329(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function void () {
+            while(i < 10 || j > 5) {i = i + 1; j = j - 1;}
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([WhileStmt(BinExpr(||, BinExpr(<, i, IntegerLit(10)), BinExpr(>, j, IntegerLit(5))), BlockStmt([AssignStmt(Id(i), BinExpr(+, i, IntegerLit(1))), AssignStmt(Id(j), BinExpr(-, j, IntegerLit(1)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 329))
+        
+    def test_AST330(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function void () {
+            if (a < b && c < d && e > f || g > h && i <= j && k >= l || m != n && o == p) {x=1;} else {x=2;}
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([IfStmt(BinExpr(&&, BinExpr(||, BinExpr(&&, BinExpr(&&, BinExpr(||, BinExpr(&&, BinExpr(&&, BinExpr(<, a, b), BinExpr(<, c, d)), BinExpr(>, e, f)), BinExpr(>, g, h)), BinExpr(<=, i, j)), BinExpr(>=, k, l)), BinExpr(!=, m, n)), BinExpr(==, o, p)), BlockStmt([AssignStmt(Id(x), IntegerLit(1))]), BlockStmt([AssignStmt(Id(x), IntegerLit(2))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 330))
+        
+    
+#         input = """ /* Mai Huu Nghia 2052612 */
+#         main: function void () {
+#             if (a < b && c < d && e > f || g > h && i <= j && k >= l || m != n && o == p) {x=1;} else {x=2;}
+#         }"""
+#         expect = """Program([
+# 	FuncDecl(main, VoidType, [], None, BlockStmt([IfStmt(BinExpr(&&, BinExpr(||, BinExpr(&&, BinExpr(&&, BinExpr(||, BinExpr(&&, BinExpr(&&, BinExpr(<, a, b), BinExpr(<, c, d)), BinExpr(>, e, f)), BinExpr(>, g, h)), BinExpr(<=, i, j)), BinExpr(>=, k, l)), BinExpr(!=, m, n)), BinExpr(==, o, p)), BlockStmt([AssignStmt(Id(x), IntegerLit(1))]), BlockStmt([AssignStmt(Id(x), IntegerLit(2))]))]))
+# ])"""
+#         self.assertTrue(TestAST.test(input, expect, 304))
