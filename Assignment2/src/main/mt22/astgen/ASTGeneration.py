@@ -109,8 +109,8 @@ class ASTGeneration(MT22Visitor):
     # arraySize: INTEGERLIT COMMA arraySize | INTEGERLIT ;
     def visitArraySize(self, ctx:MT22Parser.ArraySizeContext):
         if ctx.arraySize():
-            return [int(ctx.INTEGERLIT().getText())] + self.visit(ctx.arraySize())
-        return [int(ctx.INTEGERLIT().getText())]                    
+            return str(int(ctx.INTEGERLIT().getText())) + self.visit(ctx.arraySize())
+        else: return str(int(ctx.INTEGERLIT().getText()))
 
     # funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID | AUTO | arrayType;
     def visitFuncType(self, ctx: MT22Parser.FuncTypeContext):
@@ -214,8 +214,8 @@ class ASTGeneration(MT22Visitor):
     # blockStmtbody: (variableDeclList | statement) blockStmtbody | (variableDeclList | statement);
     def visitBlockStmtbody(self, ctx:MT22Parser.BlockStmtbodyContext):
         if ctx.blockStmtbody():
-            return [self.visit(ctx.variableDeclList()) if ctx.variableDeclList() else self.visit(ctx.statement())]+self.visit(ctx.blockStmtbody())
-        return [self.visit(ctx.variableDeclList()) if ctx.variableDeclList() else self.visit(ctx.statement())]    
+            return list(self.visit(ctx.variableDeclList()) if ctx.variableDeclList() else [self.visit(ctx.statement())])+self.visit(ctx.blockStmtbody())
+        return list(self.visit(ctx.variableDeclList()) if ctx.variableDeclList() else [self.visit(ctx.statement())])
 
     # espresso: espresso (AND | OR) espresso1 | espresso1;
     def visitEspresso(self, ctx: MT22Parser.EspressoContext):
@@ -312,21 +312,21 @@ class ASTGeneration(MT22Visitor):
     
     # espresso12: espresso12 COMMA elem | elem;
     def visitEspresso12(self, ctx: MT22Parser.Espresso12Context):
-        if ctx.elem():
-            return [self.visit(ctx.espresso12())]+self.visit(ctx.elem())
+        if ctx.espresso12():
+            return [self.visit(ctx.elem())]+self.visit(ctx.espresso12())
         return [self.visit(ctx.elem())]
 
     # lhs: ID | lhsop;
     def visitLhs(self, ctx: MT22Parser.LhsContext):
         if ctx.ID():
-            return [Id(ctx.ID().getText())]
+            return Id(ctx.ID().getText())
         elif ctx.lhsop():
             return self.visit(ctx.lhsop())
 
     # lhsop: ID LSB (espresso12 | lhsop) RSB;
     def visitLhsop(self, ctx:MT22Parser.LhsopContext):
         ids = Id(ctx.ID().getText())
-        cell = [self.visit(ctx.espresso12()) if ctx.espresso12() else self.visit(ctx.lhsop())]
+        cell = self.visit(ctx.espresso12()) if ctx.espresso12() else self.visit(ctx.lhsop())
         return ArrayCell(ids,cell)
     
     # arrayLit: LCB elemArrays? RCB;

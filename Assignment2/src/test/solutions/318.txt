@@ -1,0 +1,5 @@
+Program([
+	VarDecl(emches, IntegerType, IntegerLit(2052612))
+	FuncDecl(fib, VoidType, [Param(n, IntegerType)], None, BlockStmt([IfStmt(BinExpr(||, BinExpr(==, n, IntegerLit(1)), BinExpr(==, n, IntegerLit(0))), BlockStmt([]), BlockStmt([VarDecl(a, IntegerType, IntegerLit(0)), VarDecl(b, IntegerType, IntegerLit(1)), ForStmt(AssignStmt(i, IntegerLit(2)), BinExpr(<, i, BinExpr(+, n, IntegerLit(1))), BinExpr(+, i, IntegerLit(1)), BlockStmt([AssignStmt(Id(c), BinExpr(+, a, b)), AssignStmt(Id(a), b), AssignStmt(Id(b), c)])), ReturnStmt(b)]))]))
+	FuncDecl(print, VoidType, [], None, BlockStmt([CallStmt(print, FuncCall(fib, [BinExpr(+, IntegerLit(3), IntegerLit(1))]))]))
+])
