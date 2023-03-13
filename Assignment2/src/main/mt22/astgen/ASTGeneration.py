@@ -15,17 +15,12 @@ class ASTGeneration(MT22Visitor):
             return list(self.visit(ctx.declare()))+ self.visit(ctx.declares())
         return list(self.visit(ctx.declare()))
 
-    # declare: funcDeclList | variableDeclList;
+    # declare: funcDecl | variableDeclList;
     def visitDeclare(self, ctx: MT22Parser.DeclareContext):
-        if ctx.funcDeclList():
-            return self.visit(ctx.funcDeclList())
+        if ctx.funcDecl():
+            return self.visit(ctx.funcDecl())
         elif ctx.variableDeclList():
             return self.visit(ctx.variableDeclList())
-
-    # funcDeclList: funcDecl funcDeclList | funcDecl;
-    def visitFunDeclList(self, ctx:MT22Parser.FuncDeclListContext):
-        if ctx.funcDeclList(): return [self.visit(ctx.funcDecl())] + self.visit(ctx.funcDeclList())
-        return [self.visit(ctx.funcDecl())]
     
     # funcDecl: ID COLON FUNCTION funcType LB (variaFuncList)? RB ( INHERIT ID )? blockStmt;
     def visitFuncDecl(self, ctx:MT22Parser.FuncDeclContext):

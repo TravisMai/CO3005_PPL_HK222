@@ -24,11 +24,6 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#funcDeclList.
-    def visitFuncDeclList(self, ctx:MT22Parser.FuncDeclListContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by MT22Parser#funcDecl.
     def visitFuncDecl(self, ctx:MT22Parser.FuncDeclContext):
         return self.visitChildren(ctx)

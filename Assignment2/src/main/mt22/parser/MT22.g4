@@ -17,8 +17,7 @@ program: declares EOF;
 
 declares: declare declares | declare;
 
-declare: funcDeclList | variableDeclList;
-funcDeclList: funcDecl funcDeclList | funcDecl;
+declare: funcDecl | variableDeclList;
 funcDecl:
 	ID COLON FUNCTION funcType LB (variaFuncList)? RB (
 		INHERIT ID

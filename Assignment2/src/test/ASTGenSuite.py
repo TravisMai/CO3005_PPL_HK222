@@ -687,4 +687,182 @@ class ASTGenSuite(unittest.TestCase):
 	VarDecl(emches, IntegerType, IntegerLit(2052612))
 	FuncDecl(main, FloatType, [], None, BlockStmt([DoWhileStmt(BinExpr(<, a, IntegerLit(10)), BlockStmt([DoWhileStmt(BinExpr(<, a, IntegerLit(9)), BlockStmt([DoWhileStmt(BinExpr(<, a, IntegerLit(8)), BlockStmt([DoWhileStmt(BinExpr(<, a, IntegerLit(7)), BlockStmt([DoWhileStmt(BinExpr(<, a, IntegerLit(6)), BlockStmt([DoWhileStmt(BinExpr(<, a, IntegerLit(5)), BlockStmt([DoWhileStmt(BinExpr(<, a, IntegerLit(4)), BlockStmt([AssignStmt(Id(a), BinExpr(<, b, c)), AssignStmt(Id(a), BinExpr(>, b, c)), AssignStmt(Id(a), BinExpr(<=, b, c)), AssignStmt(Id(a), BinExpr(>=, b, c))]))]))]))]))]))]))])), BreakStmt()]))
 ])"""
+        self.assertTrue(TestAST.test(input, expect, 342))
+        
+    def test_AST343(self):    
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function float () {
+            asd = a(2,3)[2,1];
+        }"""
+        expect = """Program([
+	FuncDecl(main, FloatType, [], None, BlockStmt([AssignStmt(Id(asd), ArrayCell(FuncCall(a, [IntegerLit(2), IntegerLit(3)]), [IntegerLit(2), IntegerLit(1)]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 343))
+        
+    def test_AST344(self):    
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function float () {
+            asd = a(2,3)[2,1];
+        }"""
+        expect = """Program([
+	FuncDecl(main, FloatType, [], None, BlockStmt([AssignStmt(Id(asd), ArrayCell(FuncCall(a, [IntegerLit(2), IntegerLit(3)]), [IntegerLit(2), IntegerLit(1)]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 344))
+        
+    def test_AST345(self):    
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function float () {
+            {}{}{}{}{}{{}}
+            {{}}{}{}{{}}{}{}
+            {}{{}}{{}}{}{}{}
+            {}{}{{}}{}{}{}{}
+            board[43252345] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        }"""
+        expect = """Program([
+	FuncDecl(main, FloatType, [], None, BlockStmt([BlockStmt([]), BlockStmt([]), BlockStmt([]), BlockStmt([]), BlockStmt([]), BlockStmt([BlockStmt([])]), BlockStmt([BlockStmt([])]), BlockStmt([]), BlockStmt([]), BlockStmt([BlockStmt([])]), BlockStmt([]), BlockStmt([]), BlockStmt([]), BlockStmt([BlockStmt([])]), BlockStmt([BlockStmt([])]), BlockStmt([]), BlockStmt([]), BlockStmt([]), BlockStmt([]), BlockStmt([]), BlockStmt([BlockStmt([])]), BlockStmt([]), BlockStmt([]), BlockStmt([]), BlockStmt([]), AssignStmt(ArrayCell(Id(board), [IntegerLit(43252345)]), ArrayLit([IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0), IntegerLit(0)]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 345))
+        
+    def test_AST346(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function string () {
+            a=9;b=c;a=21123+dsfdsfsdf+203123;
+        }"""
+        expect = """Program([
+	FuncDecl(main, StringType, [], None, BlockStmt([AssignStmt(Id(a), IntegerLit(9)), AssignStmt(Id(b), c), AssignStmt(Id(a), BinExpr(+, BinExpr(+, IntegerLit(21123), dsfdsfsdf), IntegerLit(203123)))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 346))
+        
+    def test_AST347(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function string () {
+            break;break;break;break;break;break;break;break;break;
+        }"""
+        expect = """Program([
+	FuncDecl(main, StringType, [], None, BlockStmt([BreakStmt(), BreakStmt(), BreakStmt(), BreakStmt(), BreakStmt(), BreakStmt(), BreakStmt(), BreakStmt(), BreakStmt()]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 347))
+        
+    def test_AST348(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function string () {
+            continue;continue;continue;continue;continue;continue;continue;continue;
+        }"""
+        expect = """Program([
+	FuncDecl(main, StringType, [], None, BlockStmt([ContinueStmt(), ContinueStmt(), ContinueStmt(), ContinueStmt(), ContinueStmt(), ContinueStmt(), ContinueStmt(), ContinueStmt()]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 348))
+        
+    def test_AST349(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function string () {
+            return "please more than 90/100"; 
+            return "please more than 90/100"; 
+            return "please more than 90/100"; 
+            return "please more than 90/100"; 
+            return "please more than 90/100"; 
+            return "please more than 90/100";
+        }"""
+        expect = """Program([
+	FuncDecl(main, StringType, [], None, BlockStmt([ReturnStmt(StringLit(please more than 90/100)), ReturnStmt(StringLit(please more than 90/100)), ReturnStmt(StringLit(please more than 90/100)), ReturnStmt(StringLit(please more than 90/100)), ReturnStmt(StringLit(please more than 90/100)), ReturnStmt(StringLit(please more than 90/100))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 349))
+        
+    def test_AST350(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function void () {
+            m,n: integer;
+            c: integer = !(a && b || c);
+            a: boolean = -(!a + c*2322/5234 + b%2234 + !(a == foo())) ;
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([VarDecl(m, IntegerType), VarDecl(n, IntegerType), VarDecl(c, IntegerType, UnExpr(!, BinExpr(||, BinExpr(&&, a, b), c))), VarDecl(a, BooleanType, UnExpr(-, BinExpr(+, BinExpr(+, BinExpr(+, UnExpr(!, a), BinExpr(/, BinExpr(*, c, IntegerLit(2322)), IntegerLit(5234))), BinExpr(%, b, IntegerLit(2234))), UnExpr(!, BinExpr(==, a, FuncCall(foo, []))))))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 350))
+        
+    def test_AST350(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        a: boolean = !false;
+        print: function integer (){
+            please_more_than_90(hsdad(asdasd(SAdasD(ASdasd()))));
+        }
+        a: boolean = !false;
+        print: function integer (){
+            please_more_than_90(hsdad(asdasd(SAdasD(ASdasd()))));
+        }
+        a: boolean = !false;
+        print: function integer (){
+            please_more_than_90(hsdad(asdasd(SAdasD(ASdasd()))));
+        }
+        a: boolean = !false;
+        print: function integer (){
+            please_more_than_90(hsdad(asdasd(SAdasD(ASdasd()))));
+        }
+        a: boolean = !false;
+        print: function integer (){
+            please_more_than_90(hsdad(asdasd(SAdasD(ASdasd()))));
+        }
+        a: boolean = !false;
+        print: function integer (){
+            please_more_than_90(hsdad(asdasd(SAdasD(ASdasd()))));
+        }
+        a: boolean = !false;
+        print: function integer (){
+            please_more_than_90(hsdad(asdasd(SAdasD(ASdasd()))));
+        }
+        a: boolean = !false;
+        print: function integer (){
+            please_more_than_90(hsdad(asdasd(SAdasD(ASdasd()))));
+        }
+        """
+        expect = """Program([
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 350))
+        
+    def test_AST351(self):
+        input = """ /* Mai Huu Nghia 2052612 
+        a: integer = !false;
+        a: boolean = !false;
+        a: float = !false;
+        a: auto = !false;*/
+        print: function integer (){}
+        print: function boolean (){}
+        print: function float (){}
+        print: function auto (){}
+        print: function void (){}
+        """
+        expect = """Program([
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+])"""
         self.assertTrue(TestAST.test(input, expect, 304))
