@@ -836,11 +836,11 @@ class ASTGenSuite(unittest.TestCase):
         self.assertTrue(TestAST.test(input, expect, 350))
         
     def test_AST351(self):
-        input = """ /* Mai Huu Nghia 2052612 
+        input = """ /* Mai Huu Nghia 2052612 */
         a: integer = !false;
         a: boolean = !false;
         a: float = !false;
-        a: auto = !false;*/
+        a: auto = !false;
         print: function integer (){}
         print: function boolean (){}
         print: function float (){}
@@ -848,21 +848,114 @@ class ASTGenSuite(unittest.TestCase):
         print: function void (){}
         """
         expect = """Program([
+	VarDecl(a, IntegerType, UnExpr(!, BooleanLit(False)))
 	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
-	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
-	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
-	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
-	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
-	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
-	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
-	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
-	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
-	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
-	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
-	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
-	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
-	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
-	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
-	FuncDecl(print, IntegerType, [], None, BlockStmt([CallStmt(please_more_than_90, FuncCall(hsdad, [FuncCall(asdasd, [FuncCall(SAdasD, [FuncCall(ASdasd, [])])])]))]))
+	VarDecl(a, FloatType, UnExpr(!, BooleanLit(False)))
+	VarDecl(a, AutoType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([]))
+	FuncDecl(print, BooleanType, [], None, BlockStmt([]))
+	FuncDecl(print, FloatType, [], None, BlockStmt([]))
+	FuncDecl(print, AutoType, [], None, BlockStmt([]))
+	FuncDecl(print, VoidType, [], None, BlockStmt([]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 351))
+        
+    def test_AST352(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        bubbleSort: function void(arr: array[5] of integer, n: integer)
+        {
+            for (i = 0, i < n - 1, i+1)
+            {
+                swapped: boolean = false;
+                for (j = 0, j < n - i - 1, j+1)
+                {
+                    if (arr[j] > arr[j + 1])
+                    {
+                        swap(arr[j], arr[j + 1]);
+                        swapped = true;
+                    }
+                }
+                if (swapped == false)
+                    break;
+            }
+        }
+        """
+        expect = """Program([
+	FuncDecl(bubbleSort, VoidType, [Param(arr, ArrayType([5], IntegerType)), Param(n, IntegerType)], None, BlockStmt([ForStmt(AssignStmt(i, IntegerLit(0)), BinExpr(<, i, BinExpr(-, n, IntegerLit(1))), BinExpr(+, i, IntegerLit(1)), BlockStmt([VarDecl(swapped, BooleanType, BooleanLit(False)), ForStmt(AssignStmt(j, IntegerLit(0)), BinExpr(<, j, BinExpr(-, BinExpr(-, n, i), IntegerLit(1))), BinExpr(+, j, IntegerLit(1)), BlockStmt([IfStmt(BinExpr(>, ArrayCell(arr, [j]), ArrayCell(arr, [BinExpr(+, j, IntegerLit(1))])), BlockStmt([CallStmt(swap, ArrayCell(arr, [j]), ArrayCell(arr, [BinExpr(+, j, IntegerLit(1))])), AssignStmt(Id(swapped), BooleanLit(True))]))])), IfStmt(BinExpr(==, swapped, BooleanLit(False)), BreakStmt())]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 352))
+        
+    def test_AST353(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        selectionSort: function void(arr: array[5] of integer, n: integer)
+        {
+            i, j, min_idx: integer;
+
+            for (i = 0, i < n - 1, i+1)
+            {
+                min_idx = i;
+                for (j = i + 1, j < n, j+1)
+                    if (arr[j] < arr[min_idx])
+                        min_idx = j;
+
+                swap(arr[min_idx], arr[i]);
+            }
+        }
+
+        """
+        expect = """Program([
+	FuncDecl(selectionSort, VoidType, [Param(arr, ArrayType([5], IntegerType)), Param(n, IntegerType)], None, BlockStmt([VarDecl(i, IntegerType), VarDecl(j, IntegerType), VarDecl(min_idx, IntegerType), ForStmt(AssignStmt(i, IntegerLit(0)), BinExpr(<, i, BinExpr(-, n, IntegerLit(1))), BinExpr(+, i, IntegerLit(1)), BlockStmt([AssignStmt(Id(min_idx), i), ForStmt(AssignStmt(j, BinExpr(+, i, IntegerLit(1))), BinExpr(<, j, n), BinExpr(+, j, IntegerLit(1)), IfStmt(BinExpr(<, ArrayCell(arr, [j]), ArrayCell(arr, [min_idx])), AssignStmt(Id(min_idx), j))), CallStmt(swap, ArrayCell(arr, [min_idx]), ArrayCell(arr, [i]))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 353))
+        
+    def test_AST354(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        insertionSort:function void(arr: array[5] of integer, n: integer)
+        {
+            i, j, j: integer;
+
+            for (i = 1, i < n, i+1)
+            {
+                
+                j = i - 1;
+                while (j >= 0 && arr[j] > key)
+                {
+                    arr[5] = arr[i];
+                    j = j - 1;
+                }
+
+                swap(arr[min_idx], arr[i]);
+            }
+                
+                
+                
+            
+        }
+        """
+        expect = """Program([
+	FuncDecl(insertionSort, VoidType, [Param(arr, ArrayType([5], IntegerType)), Param(n, IntegerType)], None, BlockStmt([VarDecl(i, IntegerType), VarDecl(j, IntegerType), VarDecl(j, IntegerType), ForStmt(AssignStmt(i, IntegerLit(1)), BinExpr(<, i, n), BinExpr(+, i, IntegerLit(1)), BlockStmt([AssignStmt(Id(j), BinExpr(-, i, IntegerLit(1))), WhileStmt(BinExpr(&&, BinExpr(>=, j, IntegerLit(0)), BinExpr(>, ArrayCell(arr, [j]), key)), BlockStmt([AssignStmt(ArrayCell(Id(arr), [IntegerLit(5)]), ArrayCell(arr, [i])), AssignStmt(Id(j), BinExpr(-, j, IntegerLit(1)))])), CallStmt(swap, ArrayCell(arr, [min_idx]), ArrayCell(arr, [i]))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 354))
+        
+    def test_AST355(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        insertionSort:function void(arr: array[5] of integer, n: integer)
+        {
+            i, j, j: integer;
+            for (i = 1, i < n, i+1)
+            {
+                j = i - 1;
+                while (j >= 0 && arr[j] > key)
+                {
+                    arr[5] = arr[i];
+                    j = j - 1;
+                }
+
+                swap(arr[min_idx], arr[i]);
+            }
+        }
+        """
+        expect = """Program([
+	FuncDecl(insertionSort, VoidType, [Param(arr, ArrayType([5], IntegerType)), Param(n, IntegerType)], None, BlockStmt([VarDecl(i, IntegerType), VarDecl(j, IntegerType), VarDecl(j, IntegerType), ForStmt(AssignStmt(i, IntegerLit(1)), BinExpr(<, i, n), BinExpr(+, i, IntegerLit(1)), BlockStmt([AssignStmt(Id(j), BinExpr(-, i, IntegerLit(1))), WhileStmt(BinExpr(&&, BinExpr(>=, j, IntegerLit(0)), BinExpr(>, ArrayCell(arr, [j]), key)), BlockStmt([AssignStmt(ArrayCell(Id(arr), [IntegerLit(5)]), ArrayCell(arr, [i])), AssignStmt(Id(j), BinExpr(-, j, IntegerLit(1)))])), CallStmt(swap, ArrayCell(arr, [min_idx]), ArrayCell(arr, [i]))]))]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 304))

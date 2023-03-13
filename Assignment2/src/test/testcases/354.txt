@@ -2,8 +2,10 @@
         insertionSort:function void(arr: array[5] of integer, n: integer)
         {
             i, j, j: integer;
+
             for (i = 1, i < n, i+1)
             {
+                
                 j = i - 1;
                 while (j >= 0 && arr[j] > key)
                 {
@@ -13,5 +15,9 @@
 
                 swap(arr[min_idx], arr[i]);
             }
+                
+                
+                
+            
         }
         

@@ -1,0 +1,3 @@
+Program([
+	FuncDecl(bubbleSort, VoidType, [Param(arr, ArrayType([5], IntegerType)), Param(n, IntegerType)], None, BlockStmt([ForStmt(AssignStmt(i, IntegerLit(0)), BinExpr(<, i, BinExpr(-, n, IntegerLit(1))), BinExpr(+, i, IntegerLit(1)), BlockStmt([VarDecl(swapped, BooleanType, BooleanLit(False)), ForStmt(AssignStmt(j, IntegerLit(0)), BinExpr(<, j, BinExpr(-, BinExpr(-, n, i), IntegerLit(1))), BinExpr(+, j, IntegerLit(1)), BlockStmt([IfStmt(BinExpr(>, ArrayCell(arr, [j]), ArrayCell(arr, [BinExpr(+, j, IntegerLit(1))])), BlockStmt([CallStmt(swap, ArrayCell(arr, [j]), ArrayCell(arr, [BinExpr(+, j, IntegerLit(1))])), AssignStmt(Id(swapped), BooleanLit(True))]))])), IfStmt(BinExpr(==, swapped, BooleanLit(False)), BreakStmt())]))]))
+])
