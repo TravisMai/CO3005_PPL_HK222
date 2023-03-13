@@ -83,7 +83,7 @@ class ASTGeneration(MT22Visitor):
 
     # args: LB expList? RB;
     def visitArgs(self, ctx: MT22Parser.ArgsContext):
-        return self.visit(ctx.expList()) if ctx.expList() else None
+        return self.visit(ctx.expList()) if ctx.expList() else []
 
     # expList: espresso COMMA expList | espresso;
     def visitExpList(self, ctx: MT22Parser.ExpListContext):
@@ -331,7 +331,7 @@ class ASTGeneration(MT22Visitor):
     
     # arrayLit: LCB elemArrays? RCB;
     def visitArrayLit(self, ctx: MT22Parser.ArrayLitContext):
-        return ArrayLit(self.visit(ctx.elemArrays())) if ctx.elemArrays() else None
+        return ArrayLit(self.visit(ctx.elemArrays()) if ctx.elemArrays() else [])
 
     # elemArrays: espresso COMMA elemArrays | espresso;
     def visitElemArrays(self, ctx: MT22Parser.ElemArraysContext):

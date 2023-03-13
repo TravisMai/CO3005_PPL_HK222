@@ -1,0 +1,5 @@
+Program([
+	VarDecl(test, StringType, StringLit(depressed))
+	FuncDecl(stringconcat, StringType, [], None, BlockStmt([ForStmt(AssignStmt(i, IntegerLit(0)), BinExpr(<=, i, IntegerLit(10)), FuncCall(hehe, [BinExpr(+, i, IntegerLit(1))]), BlockStmt([VarDecl(hehe, StringType, StringLit(12`1)), AssignStmt(Id(concattest), BinExpr(::, BinExpr(::, BinExpr(::, test, StringLit(z)), StringLit(asd)), StringLit(sadasd))), CallStmt(hehe, StringLit(wqeqewqeqwe))])), ReturnStmt(concattest)]))
+	VarDecl(lmeo, StringType, FuncCall(stringconcat, [test]))
+])
