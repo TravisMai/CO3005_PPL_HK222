@@ -913,7 +913,6 @@ class ASTGenSuite(unittest.TestCase):
         insertionSort:function void(arr: array[5] of integer, n: integer)
         {
             i, j, j: integer;
-
             for (i = 1, i < n, i+1)
             {
                 
@@ -926,10 +925,6 @@ class ASTGenSuite(unittest.TestCase):
 
                 swap(arr[min_idx], arr[i]);
             }
-                
-                
-                
-            
         }
         """
         expect = """Program([
@@ -957,5 +952,113 @@ class ASTGenSuite(unittest.TestCase):
         """
         expect = """Program([
 	FuncDecl(insertionSort, VoidType, [Param(arr, ArrayType([5], IntegerType)), Param(n, IntegerType)], None, BlockStmt([VarDecl(i, IntegerType), VarDecl(j, IntegerType), VarDecl(j, IntegerType), ForStmt(AssignStmt(i, IntegerLit(1)), BinExpr(<, i, n), BinExpr(+, i, IntegerLit(1)), BlockStmt([AssignStmt(Id(j), BinExpr(-, i, IntegerLit(1))), WhileStmt(BinExpr(&&, BinExpr(>=, j, IntegerLit(0)), BinExpr(>, ArrayCell(arr, [j]), key)), BlockStmt([AssignStmt(ArrayCell(Id(arr), [IntegerLit(5)]), ArrayCell(arr, [i])), AssignStmt(Id(j), BinExpr(-, j, IntegerLit(1)))])), CallStmt(swap, ArrayCell(arr, [min_idx]), ArrayCell(arr, [i]))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 355))
+        
+    def test_AST356(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        a: integer = !false;
+        a: boolean = !false;
+        a: integer = !false;
+        a: boolean = !false;
+        print: function integer (){}
+        a: float = !false;
+        print: function auto (){}
+        print: function integer (){}
+        print: function void (){}
+        a: auto = !false;
+        a: integer = !false;
+        a: boolean = !false;
+        print: function integer (){}
+        print: function boolean (){}
+        print: function float (){}
+        a: integer = !false;
+        a: boolean = !false;
+        print: function auto (){}
+        print: function void (){}
+        """
+        expect = """Program([
+	VarDecl(a, IntegerType, UnExpr(!, BooleanLit(False)))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	VarDecl(a, IntegerType, UnExpr(!, BooleanLit(False)))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([]))
+	VarDecl(a, FloatType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, AutoType, [], None, BlockStmt([]))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([]))
+	FuncDecl(print, VoidType, [], None, BlockStmt([]))
+	VarDecl(a, AutoType, UnExpr(!, BooleanLit(False)))
+	VarDecl(a, IntegerType, UnExpr(!, BooleanLit(False)))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([]))
+	FuncDecl(print, BooleanType, [], None, BlockStmt([]))
+	FuncDecl(print, FloatType, [], None, BlockStmt([]))
+	VarDecl(a, IntegerType, UnExpr(!, BooleanLit(False)))
+	VarDecl(a, BooleanType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, AutoType, [], None, BlockStmt([]))
+	FuncDecl(print, VoidType, [], None, BlockStmt([]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 356))
+        
+    def test_AST357(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        a: integer = !false;
+        print: function integer (){
+            if(false) {
+                a[2131235] = a[213121] + 2;
+                b[9213] = b[5123123] || true;
+            } else{}
+        }
+        """
+        expect = """Program([
+	VarDecl(a, IntegerType, UnExpr(!, BooleanLit(False)))
+	FuncDecl(print, IntegerType, [], None, BlockStmt([IfStmt(BooleanLit(False), BlockStmt([AssignStmt(ArrayCell(Id(a), [IntegerLit(2131235)]), BinExpr(+, ArrayCell(a, [IntegerLit(213121)]), IntegerLit(2))), AssignStmt(ArrayCell(Id(b), [IntegerLit(9213)]), BinExpr(||, ArrayCell(b, [IntegerLit(5123123)]), BooleanLit(True)))]), BlockStmt([]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 357))
+        
+    def test_AST358(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        railgfdgdfgfence_encfdgfdgdfgrypt: function string(pladfgdfgin: string, keydfg: integer, idfgdfgdfgdfndent: integer) {
+            if (kedfgdfgy <= 1)
+                return plaifdgdfgdfn;
+            
+            matfdgdfgrix: array[15] of string;
+            row, dir: integer = 0, -1;
+            for (i = 0, i < length(pladfgdfgin), i + 1) {
+                if ((j == key - 1) || (j == 0))
+                    dir = didfgdfgr * -1;
+                madfgdftrix[1] = matdfgdfrix[j]::pldfgdfgdfain[i];
+                if (ddfgdfgir == 1)
+                    fdgj = j + 1;
+                else
+                    jfdgdf = j - 1;
+            }
+            cifdgdfgpherfddfgfdgdfgtext: string;
+            for (i = 0, i < kfdgdfgey, i + 1) {
+                cigfdgdfgdfpherdfgdfgtext = ciphdfgdgfdrtext::matrix[i];
+            }
+            return ciphefdgdfgdfgrtext;
+        }
+        """
+        expect = """Program([
+	FuncDecl(railgfdgdfgfence_encfdgfdgdfgrypt, StringType, [Param(pladfgdfgin, StringType), Param(keydfg, IntegerType), Param(idfgdfgdfgdfndent, IntegerType)], None, BlockStmt([IfStmt(BinExpr(<=, kedfgdfgy, IntegerLit(1)), ReturnStmt(plaifdgdfgdfn)), VarDecl(matfdgdfgrix, ArrayType([1, 5], StringType)), VarDecl(row, IntegerType, IntegerLit(0)), VarDecl(dir, IntegerType, UnExpr(-, IntegerLit(1))), ForStmt(AssignStmt(i, IntegerLit(0)), BinExpr(<, i, FuncCall(length, [pladfgdfgin])), BinExpr(+, i, IntegerLit(1)), BlockStmt([IfStmt(BinExpr(||, BinExpr(==, j, BinExpr(-, key, IntegerLit(1))), BinExpr(==, j, IntegerLit(0))), AssignStmt(Id(dir), BinExpr(*, didfgdfgr, UnExpr(-, IntegerLit(1))))), AssignStmt(ArrayCell(Id(madfgdftrix), [IntegerLit(1)]), BinExpr(::, ArrayCell(matdfgdfrix, [j]), ArrayCell(pldfgdfgdfain, [i]))), IfStmt(BinExpr(==, ddfgdfgir, IntegerLit(1)), AssignStmt(Id(fdgj), BinExpr(+, j, IntegerLit(1))), AssignStmt(Id(jfdgdf), BinExpr(-, j, IntegerLit(1))))])), VarDecl(cifdgdfgpherfddfgfdgdfgtext, StringType), ForStmt(AssignStmt(i, IntegerLit(0)), BinExpr(<, i, kfdgdfgey), BinExpr(+, i, IntegerLit(1)), BlockStmt([AssignStmt(Id(cigfdgdfgdfpherdfgdfgtext), BinExpr(::, ciphdfgdgfdrtext, ArrayCell(matrix, [i])))])), ReturnStmt(ciphefdgdfgdfgrtext)]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 358))
+        
+    def test_AST359(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        a: array[2, 3] of integer = {{2,3,4},{5,6,7}};
+        """
+        expect = """Program([
+	VarDecl(a, ArrayType([2, 3], IntegerType), ArrayLit([ArrayLit([IntegerLit(2), IntegerLit(3), IntegerLit(4)]), ArrayLit([IntegerLit(5), IntegerLit(6), IntegerLit(7)])]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 359))
+        
+    def test_AST360(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        a: array[2, 3] of integer = {{2,3,4},{5,6,7}};
+        """
+        expect = """Program([
+	VarDecl(a, ArrayType([2, 3], IntegerType), ArrayLit([ArrayLit([IntegerLit(2), IntegerLit(3), IntegerLit(4)]), ArrayLit([IntegerLit(5), IntegerLit(6), IntegerLit(7)])]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 304))

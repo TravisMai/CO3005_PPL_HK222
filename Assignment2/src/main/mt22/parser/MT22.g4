@@ -156,7 +156,7 @@ booleanlit: TRUE | FALSE;
 
 STRINGLIT: ('"' StrCha? '"') {self.text = self.text[1:-1]};
 arrayLit: LCB elemArrays? RCB;
-elemArrays: espresso COMMA elemArrays | espresso;
+elemArrays: (espresso | arrayLit) COMMA elemArrays | (espresso | arrayLit);
 // elemArray: INTEGERLIT | FLOATLIT | booleanlit | STRINGLIT;
 elem: INTEGERLIT | FLOATLIT | booleanlit | STRINGLIT;
 fragment StrCha: (~["\\\r\n] | Esc)+;

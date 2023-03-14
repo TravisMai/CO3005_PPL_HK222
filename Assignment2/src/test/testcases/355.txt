@@ -4,7 +4,6 @@
             i, j, j: integer;
             for (i = 1, i < n, i+1)
             {
-                
                 j = i - 1;
                 while (j >= 0 && arr[j] > key)
                 {

@@ -328,11 +328,11 @@ class ASTGeneration(MT22Visitor):
     def visitArrayLit(self, ctx: MT22Parser.ArrayLitContext):
         return ArrayLit(self.visit(ctx.elemArrays()) if ctx.elemArrays() else [])
 
-    # elemArrays: espresso COMMA elemArrays | espresso;
+    # elemArrays: (espresso | arrayLit) COMMA elemArrays | (espresso | arrayLit);
     def visitElemArrays(self, ctx: MT22Parser.ElemArraysContext):
         if ctx.elemArrays():
-            return [self.visit(ctx.espresso())]+self.visit(ctx.elemArrays())
-        return [self.visit(ctx.espresso())]
+            return [self.visit(ctx.espresso()) if ctx.espresso() else self.visit(ctx.arrayLit())]+self.visit(ctx.elemArrays())
+        return [self.visit(ctx.espresso()) if ctx.espresso() else self.visit(ctx.arrayLit())]
 
     # elem: INTEGERLIT | FLOATLIT | booleanlit | STRINGLIT;
     def visitElem(self, ctx: MT22Parser.ElemContext):
