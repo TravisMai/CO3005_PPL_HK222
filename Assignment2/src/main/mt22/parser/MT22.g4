@@ -28,11 +28,12 @@ variaFuncList:
 	| variaFuncDeclarator;
 variaFuncDeclarator: INHERIT? OUT? ID COLON typeType;
 
-variableDeclList: (varia_yes_body | (varia_no_body COLON (variType | arrayType)) ) SM;
+variableDeclList: (
+		varia_yes_body
+		| (varia_no_body COLON (variType | arrayType))
+	) SM;
 
-varia_no_body:
-	ID COMMA varia_no_body
-	| ID ;
+varia_no_body: ID COMMA varia_no_body | ID;
 
 varia_yes_body:
 	ID COMMA varia_yes_body COMMA espresso
@@ -43,7 +44,7 @@ expList: espresso COMMA expList | espresso;
 
 typeType: funcType | arrayType | variType;
 arrayType: ARRAY LSB arraySize RSB OF variType;
-arraySize: INTEGERLIT COMMA arraySize | INTEGERLIT ;
+arraySize: INTEGERLIT COMMA arraySize | INTEGERLIT;
 funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID | AUTO | arrayType;
 variType: INTEGER | FLOAT | BOOLEAN | STRING | AUTO;
 
@@ -156,7 +157,8 @@ booleanlit: TRUE | FALSE;
 
 STRINGLIT: ('"' StrCha? '"') {self.text = self.text[1:-1]};
 arrayLit: LCB elemArrays? RCB;
-elemArrays: (espresso | arrayLit) COMMA elemArrays | (espresso | arrayLit);
+elemArrays: (espresso | arrayLit) COMMA elemArrays
+	| (espresso | arrayLit);
 // elemArray: INTEGERLIT | FLOATLIT | booleanlit | STRINGLIT;
 elem: INTEGERLIT | FLOATLIT | booleanlit | STRINGLIT;
 fragment StrCha: (~["\\\r\n] | Esc)+;

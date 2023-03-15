@@ -1056,9 +1056,99 @@ class ASTGenSuite(unittest.TestCase):
         
     def test_AST360(self):
         input = """ /* Mai Huu Nghia 2052612 */
-        a: array[2, 3] of integer = {{2,3,4},{5,6,7}};
+        a: array[2, 3] of integer = {{"2","3","4"},{"5","6","7"}};
+        main: function void() {
+            return fdsoo(3 + x, 4.0 / y);
+        }
         """
         expect = """Program([
-	VarDecl(a, ArrayType([2, 3], IntegerType), ArrayLit([ArrayLit([IntegerLit(2), IntegerLit(3), IntegerLit(4)]), ArrayLit([IntegerLit(5), IntegerLit(6), IntegerLit(7)])]))
+	VarDecl(a, ArrayType([2, 3], IntegerType), ArrayLit([ArrayLit([StringLit(2), StringLit(3), StringLit(4)]), ArrayLit([StringLit(5), StringLit(6), StringLit(7)])]))
+	FuncDecl(main, VoidType, [], None, BlockStmt([ReturnStmt(FuncCall(fdsoo, [BinExpr(+, IntegerLit(3), x), BinExpr(/, FloatLit(4.0), y)]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 360))
+        
+    def test_AST361(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        a: array[2, 3] of integer = {{"2","3","4"},{"5","6","7"}};
+        main: function void() {
+            do {
+                writeLn("asdA = " :: str(asad));
+                a = a + 1;
+                break;
+            } while (a <= 10);
+        }
+        """
+        expect = """Program([
+	VarDecl(a, ArrayType([2, 3], IntegerType), ArrayLit([ArrayLit([StringLit(2), StringLit(3), StringLit(4)]), ArrayLit([StringLit(5), StringLit(6), StringLit(7)])]))
+	FuncDecl(main, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, a, IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(asdA = ), FuncCall(str, [asad]))), AssignStmt(Id(a), BinExpr(+, a, IntegerLit(1))), BreakStmt()]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 361))
+        
+    def test_AST362(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        x: integer = 43;
+        fact: function integer (n: integer) {
+            if (n == 0) return 1;
+            else return n * fact(n - 1);
+        }
+        inc: function void(out n: integer, delta: integer) {
+            n = n + delta;
+        }
+        main: function void() {
+            delta: integer = fact(3);
+            inc(x, delta);
+            printInteger(x);
+        }
+        """
+        expect = """Program([
+	VarDecl(x, IntegerType, IntegerLit(43))
+	FuncDecl(fact, IntegerType, [Param(n, IntegerType)], None, BlockStmt([IfStmt(BinExpr(==, n, IntegerLit(0)), ReturnStmt(IntegerLit(1)), ReturnStmt(BinExpr(*, n, FuncCall(fact, [BinExpr(-, n, IntegerLit(1))]))))]))
+	FuncDecl(inc, VoidType, [OutParam(n, IntegerType), Param(delta, IntegerType)], None, BlockStmt([AssignStmt(Id(n), BinExpr(+, n, delta))]))
+	FuncDecl(main, VoidType, [], None, BlockStmt([VarDecl(delta, IntegerType, FuncCall(fact, [IntegerLit(3)])), CallStmt(inc, x, delta), CallStmt(printInteger, x)]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 362))
+        
+    def test_AST363(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        x: integer = 43;
+        inc: function void(out n: integer, delta: integer) {
+            n = n + delta;
+        }
+        main: function void() {
+            delta: integer = fact(3);
+            inc(x, delta);
+            printInteger(x);
+        }
+        """
+        expect = """Program([
+	VarDecl(x, IntegerType, IntegerLit(43))
+	FuncDecl(inc, VoidType, [OutParam(n, IntegerType), Param(delta, IntegerType)], None, BlockStmt([AssignStmt(Id(n), BinExpr(+, n, delta))]))
+	FuncDecl(main, VoidType, [], None, BlockStmt([VarDecl(delta, IntegerType, FuncCall(fact, [IntegerLit(3)])), CallStmt(inc, x, delta), CallStmt(printInteger, x)]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 363))
+        
+    def test_AST364(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function void() {
+            delta: integer = fact(3);
+            inc(x, delta);
+            printInteger(x);
+        }
+        """
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([VarDecl(delta, IntegerType, FuncCall(fact, [IntegerLit(3)])), CallStmt(inc, x, delta), CallStmt(printInteger, x)]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 364))
+        
+    def test_AST365(self):
+        input = """ /* Mai Huu Nghia 2052612 */
+        main: function void() {
+            delta: integer = fact(3);
+            inc(x, delta);
+            printInteger(x);
+        }
+        """
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([VarDecl(delta, IntegerType, FuncCall(fact, [IntegerLit(3)])), CallStmt(inc, x, delta), CallStmt(printInteger, x)]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 304))
