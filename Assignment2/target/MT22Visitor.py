@@ -79,13 +79,13 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#funcType.
-    def visitFuncType(self, ctx:MT22Parser.FuncTypeContext):
+    # Visit a parse tree produced by MT22Parser#variType.
+    def visitVariType(self, ctx:MT22Parser.VariTypeContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#variType.
-    def visitVariType(self, ctx:MT22Parser.VariTypeContext):
+    # Visit a parse tree produced by MT22Parser#funcType.
+    def visitFuncType(self, ctx:MT22Parser.FuncTypeContext):
         return self.visitChildren(ctx)
 
 

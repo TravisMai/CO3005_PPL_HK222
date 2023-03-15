@@ -107,23 +107,6 @@ class ASTGeneration(MT22Visitor):
             return str(int(ctx.INTEGERLIT().getText())) + self.visit(ctx.arraySize())
         else: return str(int(ctx.INTEGERLIT().getText()))
 
-    # funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID | AUTO | arrayType;
-    def visitFuncType(self, ctx: MT22Parser.FuncTypeContext):
-        if ctx.INTEGER():
-            return IntegerType()
-        elif ctx.FLOAT():
-            return FloatType()
-        elif ctx.BOOLEAN():
-            return BooleanType()
-        elif ctx.STRING():
-            return StringType()
-        elif ctx.VOID():
-            return VoidType()
-        elif ctx.AUTO():
-            return AutoType()
-        elif ctx.arrayType():
-            return self.visit(ctx.arrayType())
-
     # variType: INTEGER | FLOAT | BOOLEAN | STRING | AUTO;
     def visitVariType(self, ctx: MT22Parser.VariTypeContext):
         if ctx.INTEGER():
@@ -136,6 +119,15 @@ class ASTGeneration(MT22Visitor):
             return StringType()
         elif ctx.AUTO():
             return AutoType()
+        
+    # funcType: variType | VOID | arrayType;
+    def visitFuncType(self, ctx: MT22Parser.FuncTypeContext):
+        if ctx.variType():
+            return self.visit(ctx.variType())
+        elif ctx.VOID():
+            return VoidType()
+        elif ctx.arrayType():
+            return self.visit(ctx.arrayType())
 
     # statement
     def visitStatement(self, ctx: MT22Parser.StatementContext):

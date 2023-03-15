@@ -45,8 +45,8 @@ expList: espresso COMMA expList | espresso;
 typeType: funcType | arrayType | variType;
 arrayType: ARRAY LSB arraySize RSB OF variType;
 arraySize: INTEGERLIT COMMA arraySize | INTEGERLIT;
-funcType: INTEGER | FLOAT | BOOLEAN | STRING | VOID | AUTO | arrayType;
 variType: INTEGER | FLOAT | BOOLEAN | STRING | AUTO;
+funcType: variType | VOID | arrayType;
 
 statement:
 	assStmt SM
