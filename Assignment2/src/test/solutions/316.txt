@@ -1,6 +1,6 @@
 Program([
 	VarDecl(f, ArrayType([5], IntegerType), ArrayLit([IntegerLit(1), IntegerLit(2), IntegerLit(3), IntegerLit(4), IntegerLit(5)]))
-	FuncDecl(main, VoidType, [InheritOutParam(x, FloatType), OutParam(lmeo, IntegerType)], fact, BlockStmt([IfStmt(BinExpr(&&, BinExpr(&&, BinExpr(<, x, y), BinExpr(<, y, IntegerLit(9))), BinExpr(!=, z, IntegerLit(10))), AssignStmt(Id(z), IntegerLit(456)), AssignStmt(Id(z), IntegerLit(34576))), IfStmt(BinExpr(==, BinExpr(%, i, IntegerLit(2)), IntegerLit(0)), BlockStmt([VarDecl(result, IntegerType, BinExpr(+, IntegerLit(2), BinExpr(/, BinExpr(*, IntegerLit(3), IntegerLit(4)), BinExpr(-, IntegerLit(5), IntegerLit(1))))), VarDecl(arr, ArrayType([3, 5], IntegerType)), BreakStmt()]))]))
+	FuncDecl(main, VoidType, [InheritOutParam(x, FloatType), OutParam(lmeo, IntegerType)], fact, BlockStmt([IfStmt(BinExpr(&&, BinExpr(&&, BinExpr(<, Id(x), Id(y)), BinExpr(<, Id(y), IntegerLit(9))), BinExpr(!=, Id(z), IntegerLit(10))), AssignStmt(Id(z), IntegerLit(456)), AssignStmt(Id(z), IntegerLit(34576)))]))
 	VarDecl(asd, IntegerType, IntegerLit(10))
-	FuncDecl(asdfsd, AutoType, [], None, BlockStmt([]))
+	VarDecl(asdfsd, FloatType)
 ])

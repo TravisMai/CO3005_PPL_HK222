@@ -1,3 +1,3 @@
 Program([
-	FuncDecl(main, VoidType, [], None, BlockStmt([IfStmt(BinExpr(&&, BinExpr(||, BinExpr(&&, BinExpr(&&, BinExpr(||, BinExpr(&&, BinExpr(&&, BinExpr(<, a, b), BinExpr(<, c, d)), BinExpr(>, e, f)), BinExpr(>, g, h)), BinExpr(<=, i, j)), BinExpr(>=, k, l)), BinExpr(!=, m, n)), BinExpr(==, o, p)), BlockStmt([AssignStmt(Id(x), IntegerLit(1))]), BlockStmt([AssignStmt(Id(x), IntegerLit(2))]))]))
+	FuncDecl(main, VoidType, [], None, BlockStmt([IfStmt(BinExpr(&&, BinExpr(||, BinExpr(&&, BinExpr(&&, BinExpr(||, BinExpr(&&, BinExpr(&&, BinExpr(<, Id(a), Id(b)), BinExpr(<, Id(c), Id(d))), BinExpr(>, Id(e), Id(f))), BinExpr(>, Id(g), Id(h))), BinExpr(<=, Id(i), Id(j))), BinExpr(>=, Id(k), Id(l))), BinExpr(!=, Id(m), Id(n))), BinExpr(==, Id(o), Id(p))), BlockStmt([AssignStmt(Id(x), IntegerLit(1))]), BlockStmt([AssignStmt(Id(x), IntegerLit(2))]))]))
 ])

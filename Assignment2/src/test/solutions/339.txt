@@ -1,4 +1,4 @@
 Program([
 	VarDecl(emches, IntegerType, IntegerLit(2052612))
-	FuncDecl(main, AutoType, [], None, BlockStmt([VarDecl(dividend, IntegerType, IntegerLit(25)), VarDecl(divisor, IntegerType, IntegerLit(4)), IfStmt(BinExpr(!=, BinExpr(&&, BinExpr(&&, a, BinExpr(+, a, a)), BinExpr(-, a, a)), StringLit(awsedaw)), BlockStmt([AssignStmt(ArrayCell(Id(ba), [IntegerLit(3), IntegerLit(2)]), StringLit(3rdty))])), VarDecl(quotient, IntegerType, BinExpr(/, dividend, divisor)), VarDecl(remainder, IntegerType, BinExpr(%, dividend, divisor))]))
+	FuncDecl(main, AutoType, [], None, BlockStmt([VarDecl(dividend, IntegerType, IntegerLit(25)), VarDecl(divisor, IntegerType, IntegerLit(4)), IfStmt(BinExpr(!=, BinExpr(&&, BinExpr(&&, Id(a), BinExpr(+, Id(a), Id(a))), BinExpr(-, Id(a), Id(a))), StringLit(awsedaw)), BlockStmt([AssignStmt(ArrayCell(ba, [IntegerLit(3), IntegerLit(2)]), StringLit(3rdty))])), VarDecl(quotient, IntegerType, BinExpr(/, Id(dividend), Id(divisor))), VarDecl(remainder, IntegerType, BinExpr(%, Id(dividend), Id(divisor)))]))
 ])

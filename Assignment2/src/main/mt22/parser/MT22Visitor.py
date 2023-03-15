@@ -199,13 +199,23 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#espresso10.
-    def visitEspresso10(self, ctx:MT22Parser.Espresso10Context):
+    # Visit a parse tree produced by MT22Parser#espresso10a.
+    def visitEspresso10a(self, ctx:MT22Parser.Espresso10aContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#espresso11.
-    def visitEspresso11(self, ctx:MT22Parser.Espresso11Context):
+    # Visit a parse tree produced by MT22Parser#espresso10b.
+    def visitEspresso10b(self, ctx:MT22Parser.Espresso10bContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MT22Parser#espresso11a.
+    def visitEspresso11a(self, ctx:MT22Parser.Espresso11aContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MT22Parser#espresso11b.
+    def visitEspresso11b(self, ctx:MT22Parser.Espresso11bContext):
         return self.visitChildren(ctx)
 
 

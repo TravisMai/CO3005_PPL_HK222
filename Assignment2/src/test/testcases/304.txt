@@ -1,7 +1,3 @@
- /* Mai Huu Nghia 2052612 */
-        main: function void() {
-            delta: integer = fact(3);
-            inc(x, delta);
-            printInteger(x);
-        }
-        
+x, y, z: integer = 1, 2, 3;
+        a, b: float;
+        d,e,f: boolean;
