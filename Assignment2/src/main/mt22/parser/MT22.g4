@@ -43,9 +43,10 @@ args: LB expList? RB;
 expList: espresso COMMA expList | espresso;
 
 typeType: funcType | arrayType | variType;
-arrayType: ARRAY LSB arraySize RSB OF variType;
+arrayType: ARRAY LSB arraySize RSB OF variNoAuto;
 arraySize: INTEGERLIT COMMA arraySize | INTEGERLIT;
-variType: INTEGER | FLOAT | BOOLEAN | STRING | AUTO;
+variNoAuto: INTEGER | FLOAT | BOOLEAN | STRING;
+variType: variNoAuto | AUTO;
 funcType: variType | VOID | arrayType;
 
 statement:

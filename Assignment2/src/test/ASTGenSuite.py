@@ -1174,3 +1174,41 @@ class ASTGenSuite(unittest.TestCase):
 	FuncDecl(main, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<, Id(a), IntegerLit(10)), BlockStmt([AssignStmt(Id(a), BinExpr(+, Id(b), Id(c))), AssignStmt(Id(a), BinExpr(-, Id(b), Id(c))), AssignStmt(Id(a), BinExpr(*, Id(b), Id(c))), AssignStmt(Id(a), BinExpr(/, Id(b), Id(c))), AssignStmt(Id(a), BinExpr(%, Id(b), Id(c)))]))]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 369))
+        
+    def test_AST370(self):    
+        input = """ /* Mai Huu Nghia 2052612 */
+        emches : integer = test;
+        main: function void () {
+            while ( a < test) return x::"lmeo";
+        }"""
+        expect = """Program([
+	VarDecl(emches, IntegerType, Id(test))
+	FuncDecl(main, VoidType, [], None, BlockStmt([WhileStmt(BinExpr(<, Id(a), Id(test)), ReturnStmt(BinExpr(::, Id(x), StringLit(lmeo))))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 370))
+        
+    def test_AST371(self):    
+        input = """ /* Mai Huu Nghia 2052612 */
+        emches : integer = test;
+        main: function void () {
+            test: string = id;
+            while ( a < test) return x::"lmeo";
+        }"""
+        expect = """Program([
+	VarDecl(emches, IntegerType, Id(test))
+	FuncDecl(main, VoidType, [], None, BlockStmt([VarDecl(test, StringType, Id(id)), WhileStmt(BinExpr(<, Id(a), Id(test)), ReturnStmt(BinExpr(::, Id(x), StringLit(lmeo))))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 371))
+        
+    def test_AST372(self):    
+        input = """ /* Mai Huu Nghia 2052612 */
+        emches : integer = test;
+        main: function void () {
+            test: string = id;
+            while ( a < test) return x::"lmeo";
+        }"""
+        expect = """Program([
+	VarDecl(emches, IntegerType, Id(test))
+	FuncDecl(main, VoidType, [], None, BlockStmt([VarDecl(test, StringType, Id(id)), WhileStmt(BinExpr(<, Id(a), Id(test)), ReturnStmt(BinExpr(::, Id(x), StringLit(lmeo))))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 370))

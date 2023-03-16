@@ -79,6 +79,11 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MT22Parser#variNoAuto.
+    def visitVariNoAuto(self, ctx:MT22Parser.VariNoAutoContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MT22Parser#variType.
     def visitVariType(self, ctx:MT22Parser.VariTypeContext):
         return self.visitChildren(ctx)

@@ -95,10 +95,10 @@ class ASTGeneration(MT22Visitor):
         elif ctx.variType():
             return self.visit(ctx.variType())
 
-    # arrayType: ARRAY LSB arraySize RSB OF variType;
+    # arrayType: ARRAY LSB arraySize RSB OF variNoAuto;
     def visitArrayType( self, ctx: MT22Parser.ArrayTypeContext):
         dimens = self.visit(ctx.arraySize())
-        arrType = self.visit(ctx.variType())
+        arrType = self.visit(ctx.variNoAuto())
         return ArrayType(dimens,arrType)
              
     # arraySize: INTEGERLIT COMMA arraySize | INTEGERLIT ;
@@ -107,8 +107,8 @@ class ASTGeneration(MT22Visitor):
             return str(int(ctx.INTEGERLIT().getText())) + self.visit(ctx.arraySize())
         else: return str(int(ctx.INTEGERLIT().getText()))
 
-    # variType: INTEGER | FLOAT | BOOLEAN | STRING | AUTO;
-    def visitVariType(self, ctx: MT22Parser.VariTypeContext):
+    # variNoAuto: INTEGER | FLOAT | BOOLEAN | STRING;
+    def visitVariNoAuto(self, ctx: MT22Parser.VariNoAutoContext):
         if ctx.INTEGER():
             return IntegerType()
         elif ctx.FLOAT():
@@ -117,6 +117,11 @@ class ASTGeneration(MT22Visitor):
             return BooleanType()
         elif ctx.STRING():
             return StringType()
+    
+    # variType: variNoAuto | AUTO;
+    def visitVariType(self, ctx: MT22Parser.VariTypeContext):
+        if ctx.variNoAuto():
+            return self.visit(ctx.variNoAuto())
         elif ctx.AUTO():
             return AutoType()
         
