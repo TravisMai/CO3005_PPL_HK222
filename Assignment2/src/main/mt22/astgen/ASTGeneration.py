@@ -167,10 +167,10 @@ class ASTGeneration(MT22Visitor):
         stmt = self.visit(ctx.statement())
         return WhileStmt(cond, stmt)
     
-    # doWhileStmt: DO statement WHILE LB espresso RB;
+    # doWhileStmt: DO blockStmt WHILE LB espresso RB;
     def visitDoWhileStmt(self, ctx:MT22Parser.DoWhileStmtContext):
         cond = self.visit(ctx.espresso())
-        stmt = self.visit(ctx.statement())
+        stmt = self.visit(ctx.blockStmt())
         return DoWhileStmt(cond, stmt)
     
     # breakStmt: BREAK;

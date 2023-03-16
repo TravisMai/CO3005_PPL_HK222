@@ -66,7 +66,7 @@ ifStmt: IF LB espresso RB statement (ELSE statement)?;
 forStmt:
 	FOR LB ID ASS espresso COMMA espresso COMMA espresso RB statement;
 whileStmt: WHILE LB espresso RB statement;
-doWhileStmt: DO statement WHILE LB espresso RB;
+doWhileStmt: DO blockStmt WHILE LB espresso RB;
 breakStmt: BREAK;
 continueStmt: CONTINUE;
 returnStmt: RETURN espresso?;
