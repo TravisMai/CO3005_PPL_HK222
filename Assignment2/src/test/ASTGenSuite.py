@@ -322,7 +322,7 @@ class ASTGenSuite(unittest.TestCase):
             }
         }"""
         expect = """Program([
-	FuncDecl(main, VoidType, [], None, BlockStmt([ForStmt(AssignStmt(Id(i), IntegerLit(1)), BinExpr(<, Id(i), Id(a)), BinExpr(+, Id(i), IntegerLit(1)), BlockStmt([IfStmt(BinExpr(==, BinExpr(%, Id(i), IntegerLit(2)), IntegerLit(0)), BlockStmt([VarDecl(arr, ArrayType([3, 5], IntegerType)), BreakStmt()]))])), ForStmt(AssignStmt(Id(i), IntegerLit(1)), BinExpr(<, Id(i), Id(a)), BinExpr(+, Id(i), IntegerLit(1)), BlockStmt([ForStmt(AssignStmt(Id(j), Id(i)), BinExpr(<, Id(j), Id(a)), BinExpr(+, Id(j), IntegerLit(1)), BlockStmt([IfStmt(BinExpr(==, BinExpr(%, Id(j), IntegerLit(2)), IntegerLit(0)), BlockStmt([AssignStmt(ArrayCell(arr, [IntegerLit(1), IntegerLit(3)]), IntegerLit(3)), BreakStmt()]))]))]))]))
+	FuncDecl(main, VoidType, [], None, BlockStmt([ForStmt(AssignStmt(Id(i), IntegerLit(1)), BinExpr(<, Id(i), Id(a)), BinExpr(+, Id(i), IntegerLit(1)), BlockStmt([IfStmt(BinExpr(==, BinExpr(%, Id(i), IntegerLit(2)), IntegerLit(0)), BlockStmt([VarDecl(arr, ArrayType([3, 5], IntegerType)), BreakStmt()]))])), ForStmt(AssignStmt(Id(i), IntegerLit(1)), BinExpr(<, Id(i), Id(a)), BinExpr(+, Id(i), IntegerLit(1)), BlockStmt([ForStmt(AssignStmt(Id(j), Id(i)), BinExpr(<, Id(j), Id(a)), BinExpr(+, Id(j), IntegerLit(1)), BlockStmt([IfStmt(BinExpr(==, BinExpr(%, Id(j), IntegerLit(2)), IntegerLit(0)), BlockStmt([AssignStmt(ArrayCell(arr, [IntegerLit(3), IntegerLit(1)]), IntegerLit(3)), BreakStmt()]))]))]))]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 321))
         
@@ -605,7 +605,7 @@ class ASTGenSuite(unittest.TestCase):
         }"""
         expect = """Program([
 	VarDecl(emches, IntegerType, IntegerLit(2052612))
-	FuncDecl(main, AutoType, [], None, BlockStmt([VarDecl(dividend, IntegerType, IntegerLit(25)), VarDecl(divisor, IntegerType, IntegerLit(4)), IfStmt(BinExpr(!=, BinExpr(&&, BinExpr(&&, Id(a), BinExpr(+, Id(a), Id(a))), BinExpr(-, Id(a), Id(a))), StringLit(awsedaw)), BlockStmt([AssignStmt(ArrayCell(ba, [IntegerLit(3), IntegerLit(2)]), StringLit(3rdty))])), VarDecl(quotient, IntegerType, BinExpr(/, Id(dividend), Id(divisor))), VarDecl(remainder, IntegerType, BinExpr(%, Id(dividend), Id(divisor)))]))
+	FuncDecl(main, AutoType, [], None, BlockStmt([VarDecl(dividend, IntegerType, IntegerLit(25)), VarDecl(divisor, IntegerType, IntegerLit(4)), IfStmt(BinExpr(!=, BinExpr(&&, BinExpr(&&, Id(a), BinExpr(+, Id(a), Id(a))), BinExpr(-, Id(a), Id(a))), StringLit(awsedaw)), BlockStmt([AssignStmt(ArrayCell(ba, [IntegerLit(2), IntegerLit(3)]), StringLit(3rdty))])), VarDecl(quotient, IntegerType, BinExpr(/, Id(dividend), Id(divisor))), VarDecl(remainder, IntegerType, BinExpr(%, Id(dividend), Id(divisor)))]))
 ])"""
         self.assertTrue(TestAST.test(input, expect, 339))
         
@@ -1181,4 +1181,354 @@ class ASTGenSuite(unittest.TestCase):
 	VarDecl(emches, IntegerType, Id(test))
 	FuncDecl(main, VoidType, [], None, BlockStmt([VarDecl(test, StringType, Id(id)), WhileStmt(BinExpr(<, Id(a), Id(test)), ReturnStmt(BinExpr(::, Id(x), StringLit(lmeo))))]))
 ])"""
-        self.assertTrue(TestAST.test(input, expect, 370))
+        self.assertTrue(TestAST.test(input, expect, 372))
+        
+    def test_AST373(self):
+        input = """x, y : integer = arr[123, 211321, 2123321], adsfgrr1[4123, 2135, 6657546] ;"""
+        expect = """Program([
+	VarDecl(x, IntegerType, ArrayCell(arr, [IntegerLit(123), IntegerLit(211321), IntegerLit(2123321)]))
+	VarDecl(y, IntegerType, ArrayCell(adsfgrr1, [IntegerLit(4123), IntegerLit(2135), IntegerLit(6657546)]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 373))
+        
+    def test_AST374(self):
+        input = """x: auto;"""
+        expect = str(Program([VarDecl("x", AutoType())]))
+        self.assertTrue(TestAST.test(input, expect, 374))
+
+    def test_AST375(self):
+        input = """x: auto = 7_1212_12;"""
+        expect = str(Program([VarDecl("x", AutoType(), IntegerLit(7121212))]))
+        self.assertTrue(TestAST.test(input, expect, 375))
+        
+    def test_AST376(self):
+        input = """x, y, z: array [1] of integer = {"Mai"}, {"Huu"}, {"Nghia"};"""
+        expect = """Program([
+	VarDecl(x, ArrayType([1], IntegerType), ArrayLit([StringLit(Mai)]))
+	VarDecl(y, ArrayType([1], IntegerType), ArrayLit([StringLit(Huu)]))
+	VarDecl(z, ArrayType([1], IntegerType), ArrayLit([StringLit(Nghia)]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 376))
+        
+    def test_AST377(self):
+        input = """main: function void(){
+            {
+                hehe = "have no more idea";
+                return hehe;
+            }
+            }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([BlockStmt([AssignStmt(Id(hehe), StringLit(have no more idea)), ReturnStmt(Id(hehe))])]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 377))
+        
+    def test_AST378(self):
+        input = """main: function void(){
+            {
+                return hehe(my,life,is,stuck);
+            }
+            }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([BlockStmt([ReturnStmt(FuncCall(hehe, [Id(my), Id(life), Id(is), Id(stuck)]))])]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 378))
+        
+    def test_AST379(self):
+        input = """main: function void(){
+            {
+                return a + b < c + d;
+            }
+            }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([BlockStmt([ReturnStmt(BinExpr(<, BinExpr(+, Id(a), Id(b)), BinExpr(+, Id(c), Id(d))))])]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 379))
+        
+    def test_AST380(self):
+        input = """main: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                cse = cse + 1;
+                break;
+            } while (cse <= 10);
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), AssignStmt(Id(cse), BinExpr(+, Id(cse), IntegerLit(1))), BreakStmt()]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 380))
+        
+    def test_AST381(self):
+        input = """main: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                cse = cse + 1;
+                break;
+            } while (cse <= 10);
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), AssignStmt(Id(cse), BinExpr(+, Id(cse), IntegerLit(1))), BreakStmt()]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 381))
+        
+    def test_AST382(self):
+        input = """main: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                cse = cse + 1;
+                continue;
+            } while (cse <= 10);
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), AssignStmt(Id(cse), BinExpr(+, Id(cse), IntegerLit(1))), ContinueStmt()]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 382))
+        
+    def test_AST383(self):
+        input = """main: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                return cse + 1;
+            } while (cse <= 10);
+        }"""
+        expect = """Program([
+	FuncDecl(main, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), ReturnStmt(BinExpr(+, Id(cse), IntegerLit(1)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 383))
+        
+    def test_AST384(self):
+        input = """main3: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                return cse + 1;
+            } while (cse <= 10);
+        }
+        main2: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                cse = cse + 1;
+                continue;
+            } while (cse <= 10);
+        }"""
+        expect = """Program([
+	FuncDecl(main3, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), ReturnStmt(BinExpr(+, Id(cse), IntegerLit(1)))]))]))
+	FuncDecl(main2, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), AssignStmt(Id(cse), BinExpr(+, Id(cse), IntegerLit(1))), ContinueStmt()]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 384))
+        
+    def test_AST385(self):
+        input = """main3: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                return cse + 1;
+            } while (cse <= 10);
+        }
+        main1: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                cse = cse + 1;
+                break;
+            } while (cse <= 10);
+        }"""
+        expect = """Program([
+	FuncDecl(main3, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), ReturnStmt(BinExpr(+, Id(cse), IntegerLit(1)))]))]))
+	FuncDecl(main1, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), AssignStmt(Id(cse), BinExpr(+, Id(cse), IntegerLit(1))), BreakStmt()]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 385))
+        
+    def test_AST386(self):
+        input = """main1: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                cse = cse + 1;
+                break;
+            } while (cse <= 10);
+        }
+        main3: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                return cse + 1;
+            } while (cse <= 10);
+        }
+        """
+        expect = """Program([
+	FuncDecl(main1, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), AssignStmt(Id(cse), BinExpr(+, Id(cse), IntegerLit(1))), BreakStmt()]))]))
+	FuncDecl(main3, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), ReturnStmt(BinExpr(+, Id(cse), IntegerLit(1)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 386))
+        
+    def test_AST387(self):
+        input = """main1: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                cse = cse + 1;
+                break;
+            } while (cse <= 10);
+        }
+        main2: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                cse = cse + 1;
+                continue;
+            } while (cse <= 10);
+        }
+        """
+        expect = """Program([
+	FuncDecl(main1, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), AssignStmt(Id(cse), BinExpr(+, Id(cse), IntegerLit(1))), BreakStmt()]))]))
+	FuncDecl(main2, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), AssignStmt(Id(cse), BinExpr(+, Id(cse), IntegerLit(1))), ContinueStmt()]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 387))
+        
+    def test_AST388(self):
+        input = """
+        x,r,t: auto = 1, {3,12}, 1-2.e13;
+        main2: function void() {
+            do {
+                writeLn("CSE = " :: str(cse));
+                cse = cse + 1;
+                continue;
+            } while (cse <= 10);
+        }
+        """
+        expect = """Program([
+	VarDecl(x, AutoType, IntegerLit(1))
+	VarDecl(r, AutoType, ArrayLit([IntegerLit(3), IntegerLit(12)]))
+	VarDecl(t, AutoType, BinExpr(-, IntegerLit(1), FloatLit(20000000000000.0)))
+	FuncDecl(main2, VoidType, [], None, BlockStmt([DoWhileStmt(BinExpr(<=, Id(cse), IntegerLit(10)), BlockStmt([CallStmt(writeLn, BinExpr(::, StringLit(CSE = ), FuncCall(str, [Id(cse)]))), AssignStmt(Id(cse), BinExpr(+, Id(cse), IntegerLit(1))), ContinueStmt()]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 388))
+        
+    def test_AST389(self):
+        input = """
+        x,r,t: auto = 1, {3,12}, 1-2.e13;
+        main2: function void() {
+            a = +1;
+        }
+        """
+        expect = """Program([
+	VarDecl(x, AutoType, IntegerLit(1))
+	VarDecl(r, AutoType, ArrayLit([IntegerLit(3), IntegerLit(12)]))
+	VarDecl(t, AutoType, BinExpr(-, IntegerLit(1), FloatLit(20000000000000.0)))
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(Id(a), UnExpr(+, IntegerLit(1)))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 389))
+        
+    def test_AST390(self):
+        input = """
+        main2: function void() {
+            a[y] = j[1];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [Id(y)]), ArrayCell(j, [IntegerLit(1)]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 390))
+        
+    def test_AST391(self):
+        input = """
+        main2: function void() {
+            a[y+1] = j[1+1];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [BinExpr(+, Id(y), IntegerLit(1))]), ArrayCell(j, [BinExpr(+, IntegerLit(1), IntegerLit(1))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 391))
+        
+    def test_AST392(self):
+        input = """
+        main2: function void() {
+            a[y[121]] = j[1+1];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [ArrayCell(y, [IntegerLit(121)])]), ArrayCell(j, [BinExpr(+, IntegerLit(1), IntegerLit(1))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 392))
+        
+    def test_AST393(self):
+        input = """
+        main2: function void() {
+            a[b[c[121]]] = j[1||12];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [ArrayCell(b, [ArrayCell(c, [IntegerLit(121)])])]), ArrayCell(j, [BinExpr(||, IntegerLit(1), IntegerLit(12))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 393))
+    
+    def test_AST394(self):
+        input = """
+        main2: function void() {
+            a[r3] = j[1||12&&5%5];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [Id(r3)]), ArrayCell(j, [BinExpr(&&, BinExpr(||, IntegerLit(1), IntegerLit(12)), BinExpr(%, IntegerLit(5), IntegerLit(5)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 394))
+        
+    def test_AST395(self):
+        input = """
+        main2: function void() {
+            a[r_3_sdf] = j[1||12&&5%5];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [Id(r_3_sdf)]), ArrayCell(j, [BinExpr(&&, BinExpr(||, IntegerLit(1), IntegerLit(12)), BinExpr(%, IntegerLit(5), IntegerLit(5)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 395))
+        
+    def test_AST396(self):
+        input = """
+        main2: function void() {
+            a[r_3_sdf] = j[1||1_2&&5_6_44%5];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [Id(r_3_sdf)]), ArrayCell(j, [BinExpr(&&, BinExpr(||, IntegerLit(1), IntegerLit(12)), BinExpr(%, IntegerLit(5644), IntegerLit(5)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 396))
+        
+    def test_AST397(self):
+        input = """
+        main2: function void() {
+            a[r_3_sdf] = j[1||1_2.e4&&"56_"::"44"%5];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [Id(r_3_sdf)]), ArrayCell(j, [BinExpr(&&, BinExpr(||, IntegerLit(1), FloatLit(120000.0)), BinExpr(%, BinExpr(::, StringLit(56_), StringLit(44)), IntegerLit(5)))]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 397))
+        
+    def test_AST398(self):
+        input = """
+        main2: function void() {
+            a[foo()] = j[foo()];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [FuncCall(foo, [])]), ArrayCell(j, [FuncCall(foo, [])]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 398))
+        
+    def test_AST399(self):
+        input = """
+        main2: function void() {
+            a[foo(1+1,2==3,5||12)] = j[foo()];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [FuncCall(foo, [BinExpr(+, IntegerLit(1), IntegerLit(1)), BinExpr(==, IntegerLit(2), IntegerLit(3)), BinExpr(||, IntegerLit(5), IntegerLit(12))])]), ArrayCell(j, [FuncCall(foo, [])]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 399))
+        
+    def test_AST400(self):
+        input = """
+        main2: function void() {
+            a[foo(1+1,2==3,5||12)] = j[foo(a<b,c<d>e,e::f)];
+        }
+        """
+        expect = """Program([
+	FuncDecl(main2, VoidType, [], None, BlockStmt([AssignStmt(ArrayCell(a, [FuncCall(foo, [BinExpr(+, IntegerLit(1), IntegerLit(1)), BinExpr(==, IntegerLit(2), IntegerLit(3)), BinExpr(||, IntegerLit(5), IntegerLit(12))])]), ArrayCell(j, [FuncCall(foo, [BinExpr(<, Id(a), Id(b)), BinExpr(>, BinExpr(<, Id(c), Id(d)), Id(e)), BinExpr(::, Id(e), Id(f))])]))]))
+])"""
+        self.assertTrue(TestAST.test(input, expect, 400))

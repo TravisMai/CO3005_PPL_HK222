@@ -91,9 +91,9 @@ espresso10a: ID args | espresso11a;
 // espresso10b: ID args | espresso11b;
 espresso11a: elem | arrayLit | LB espresso RB | ID;
 // espresso11b: elem | arrayLit | LB espresso RB | ID;
-espresso12: espresso12 COMMA elem | elem;
+// espresso12: espresso12 COMMA elem | elem;
 lhs: ID | lhsop;
-lhsop: ID LSB (espresso12 | lhsop) RSB;
+lhsop: ID LSB (expList | lhsop) RSB;
 
 // 3.4 Keywords
 AUTO: 'auto';

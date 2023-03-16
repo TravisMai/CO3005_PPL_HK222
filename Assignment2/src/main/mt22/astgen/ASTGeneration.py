@@ -317,11 +317,11 @@ class ASTGeneration(MT22Visitor):
     #     elif ctx.espresso(): return self.visit(ctx.espresso())
     #     elif ctx.ID(): return ctx.ID().getText() #Id or not ?
     
-    # espresso12: espresso12 COMMA elem | elem;
-    def visitEspresso12(self, ctx: MT22Parser.Espresso12Context):
-        if ctx.espresso12():
-            return [self.visit(ctx.elem())]+self.visit(ctx.espresso12())
-        return [self.visit(ctx.elem())]
+    # # espresso12: espresso12 COMMA elem | elem;
+    # def visitEspresso12(self, ctx: MT22Parser.Espresso12Context):
+    #     if ctx.espresso12():
+    #         return [self.visit(ctx.elem())]+self.visit(ctx.espresso12())
+    #     return [self.visit(ctx.elem())]
 
     # lhs: ID | lhsop;
     def visitLhs(self, ctx: MT22Parser.LhsContext):
@@ -330,10 +330,10 @@ class ASTGeneration(MT22Visitor):
         elif ctx.lhsop():
             return self.visit(ctx.lhsop())
 
-    # lhsop: ID LSB (espresso12 | lhsop) RSB;
+    # lhsop: ID LSB (expList | lhsop) RSB;
     def visitLhsop(self, ctx:MT22Parser.LhsopContext):
         ids = ctx.ID().getText()
-        cell = self.visit(ctx.espresso12()) if ctx.espresso12() else self.visit(ctx.lhsop())
+        cell = self.visit(ctx.expList()) if ctx.expList() else self.visit(ctx.lhsop())
         return ArrayCell(ids,cell)
     
     # arrayLit: LCB elemArrays? RCB;
