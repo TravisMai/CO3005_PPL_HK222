@@ -279,11 +279,11 @@ class ASTGeneration(MT22Visitor):
         val = self.visit(ctx.espresso7())
         return UnExpr(op, val)
 
-    # espresso8: espresso10b LSB expList RSB | espresso10a;
+    # espresso8: ID LSB expList RSB | espresso10a;
     def visitEspresso8(self, ctx: MT22Parser.Espresso8Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.espresso10a())
-        arr = self.visit(ctx.espresso10b())
+        arr = ctx.ID().getText()
         idx = self.visit(ctx.expList())
         return ArrayCell(arr, idx)
 
@@ -302,20 +302,20 @@ class ASTGeneration(MT22Visitor):
         elif ctx.espresso(): return self.visit(ctx.espresso())
         elif ctx.ID(): return Id(ctx.ID().getText()) #Id or not ?
         
-    # espresso10b: ID args | espresso11b;
-    def visitEspresso10b(self, ctx: MT22Parser.Espresso10bContext):
-        if ctx.args():
-            name = ctx.ID().getText() #Id or not ?
-            args = self.visit(ctx.args())
-            return FuncCall(name,args)
-        return self.visit(ctx.espresso11b())
+    # # espresso10b: ID args | espresso11b;
+    # def visitEspresso10b(self, ctx: MT22Parser.Espresso10bContext):
+    #     if ctx.args():
+    #         name = ctx.ID().getText() #Id or not ?
+    #         args = self.visit(ctx.args())
+    #         return FuncCall(name,args)
+    #     return self.visit(ctx.espresso11b())
 
-    # espresso11b: elem | arrayLit | LB espresso RB | ID;
-    def visitEspresso11b(self, ctx:MT22Parser.Espresso11bContext):
-        if ctx.elem(): return self.visit(ctx.elem())
-        elif ctx.arrayLit(): return self.visit(ctx.arrayLit())
-        elif ctx.espresso(): return self.visit(ctx.espresso())
-        elif ctx.ID(): return ctx.ID().getText() #Id or not ?
+    # # espresso11b: elem | arrayLit | LB espresso RB | ID;
+    # def visitEspresso11b(self, ctx:MT22Parser.Espresso11bContext):
+    #     if ctx.elem(): return self.visit(ctx.elem())
+    #     elif ctx.arrayLit(): return self.visit(ctx.arrayLit())
+    #     elif ctx.espresso(): return self.visit(ctx.espresso())
+    #     elif ctx.ID(): return ctx.ID().getText() #Id or not ?
     
     # espresso12: espresso12 COMMA elem | elem;
     def visitEspresso12(self, ctx: MT22Parser.Espresso12Context):
