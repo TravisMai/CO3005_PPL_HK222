@@ -199,11 +199,6 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#espresso8.
-    def visitEspresso8(self, ctx:MT22Parser.Espresso8Context):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by MT22Parser#espresso10a.
     def visitEspresso10a(self, ctx:MT22Parser.Espresso10aContext):
         return self.visitChildren(ctx)

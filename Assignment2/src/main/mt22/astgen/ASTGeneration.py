@@ -209,7 +209,7 @@ class ASTGeneration(MT22Visitor):
             return list(self.visit(ctx.variableDeclList()) if ctx.variableDeclList() else [self.visit(ctx.statement())])+self.visit(ctx.blockStmtbody())
         return list(self.visit(ctx.variableDeclList()) if ctx.variableDeclList() else [self.visit(ctx.statement())])
 
-    # espresso: espresso (AND | OR) espresso1 | espresso1;
+    # espresso: espresso CONCAT espresso1 | espresso1;
     def visitEspresso(self, ctx: MT22Parser.EspressoContext):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.espresso1())
@@ -217,8 +217,8 @@ class ASTGeneration(MT22Visitor):
         left = self.visit(ctx.espresso())
         right = self.visit(ctx.espresso1())
         return BinExpr(op, left, right)
-
-    # espresso1: espresso1 (GT | LT | GTE | LTE) espresso2 | espresso2;
+    
+    # espresso1: espresso1 (EQUAL | NEQUAL | GT | LT | GTE | LTE) espresso2 | espresso2;
     def visitEspresso1(self, ctx: MT22Parser.Espresso1Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.espresso2())
@@ -226,8 +226,8 @@ class ASTGeneration(MT22Visitor):
         left = self.visit(ctx.espresso1())
         right = self.visit(ctx.espresso2())
         return BinExpr(op, left, right)
-
-    # espresso2: espresso2 (EQUAL | NEQUAL) espresso3 | espresso3;
+    
+    # espresso2: espresso2 (AND | OR) espresso3 | espresso3;
     def visitEspresso2(self, ctx: MT22Parser.Espresso2Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.espresso3())
@@ -235,7 +235,7 @@ class ASTGeneration(MT22Visitor):
         left = self.visit(ctx.espresso2())
         right = self.visit(ctx.espresso3())
         return BinExpr(op, left, right)
-
+    
     # espresso3: espresso3 (ADD | SUB) espresso4 | espresso4;
     def visitEspresso3(self, ctx: MT22Parser.Espresso3Context):
         if ctx.getChildCount() == 1:
@@ -244,7 +244,7 @@ class ASTGeneration(MT22Visitor):
         left = self.visit(ctx.espresso3())
         right = self.visit(ctx.espresso4())
         return BinExpr(op, left, right)
-
+    
     # espresso4: espresso4 (MUL | DIV | MOD) espresso5 | espresso5;
     def visitEspresso4(self, ctx: MT22Parser.Espresso4Context):
         if ctx.getChildCount() == 1:
@@ -253,34 +253,25 @@ class ASTGeneration(MT22Visitor):
         left = self.visit(ctx.espresso4())
         right = self.visit(ctx.espresso5())
         return BinExpr(op, left, right)
-
-    # espresso5: espresso5 CONCAT espresso6 | espresso6;
+    
+    # espresso5: NOT espresso5 | espresso6;
     def visitEspresso5(self, ctx: MT22Parser.Espresso5Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.espresso6())
-        op = ctx.getChild(1).getText()
-        left = self.visit(ctx.espresso5())
-        right = self.visit(ctx.espresso6())
-        return BinExpr(op, left, right)
-
-    # espresso6: NOT espresso6 | espresso7;
+        op = ctx.NOT().getText()
+        val = self.visit(ctx.espresso5())
+        return UnExpr(op, val)
+    
+    # espresso6: SUB espresso6 | espresso7;
     def visitEspresso6(self, ctx: MT22Parser.Espresso6Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.espresso7())
-        op = ctx.NOT().getText()
+        op = ctx.ADD().getText() if ctx.ADD() else ctx.SUB().getText()
         val = self.visit(ctx.espresso6())
         return UnExpr(op, val)
-
-    # espresso7: (ADD | SUB) espresso7 | espresso8;
+    
+    # espresso7: ID LSB expList RSB | espresso10a;
     def visitEspresso7(self, ctx: MT22Parser.Espresso7Context):
-        if ctx.getChildCount() == 1:
-            return self.visit(ctx.espresso8())
-        op = ctx.ADD().getText() if ctx.ADD() else ctx.SUB().getText()
-        val = self.visit(ctx.espresso7())
-        return UnExpr(op, val)
-
-    # espresso8: ID LSB expList RSB | espresso10a;
-    def visitEspresso8(self, ctx: MT22Parser.Espresso8Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.espresso10a())
         arr = ctx.ID().getText()

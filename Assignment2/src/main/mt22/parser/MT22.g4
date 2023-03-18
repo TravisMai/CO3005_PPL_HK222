@@ -76,22 +76,20 @@ blockStmt: LCB blockStmtbody? RCB;
 blockStmtbody: (variableDeclList | statement) blockStmtbody
 	| (variableDeclList | statement);
 
-espresso: espresso (AND | OR) espresso1 | espresso1;
+espresso: espresso CONCAT espresso1 | espresso1;
 espresso1:
-	espresso1 (GT | LT | GTE | LTE) espresso2
+	espresso1 (EQUAL | NEQUAL | GT | LT | GTE | LTE) espresso2
 	| espresso2;
-espresso2: espresso2 (EQUAL | NEQUAL) espresso3 | espresso3;
+espresso2: espresso2 (AND | OR) espresso3 | espresso3;
 espresso3: espresso3 (ADD | SUB) espresso4 | espresso4;
 espresso4: espresso4 (MUL | DIV | MOD) espresso5 | espresso5;
-espresso5: espresso5 CONCAT espresso6 | espresso6;
-espresso6: NOT espresso6 | espresso7;
-espresso7: (ADD | SUB) espresso7 | espresso8;
-espresso8: ID LSB expList RSB | espresso10a;
+espresso5: NOT espresso5 | espresso6;
+espresso6: SUB espresso6 | espresso7;
+espresso7: ID LSB expList RSB | espresso10a;
 espresso10a: ID args | espresso11a;
 // espresso10b: ID args | espresso11b;
 espresso11a: elem | arrayLit | LB espresso RB | ID;
-// espresso11b: elem | arrayLit | LB espresso RB | ID;
-// espresso12: espresso12 COMMA elem | elem;
+// espresso11b: elem | arrayLit | LB espresso RB | ID; espresso12: espresso12 COMMA elem | elem;
 lhs: ID | lhsop;
 lhsop: ID LSB (expList | lhsop) RSB;
 
