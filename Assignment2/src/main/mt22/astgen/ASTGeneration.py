@@ -266,7 +266,7 @@ class ASTGeneration(MT22Visitor):
     def visitEspresso6(self, ctx: MT22Parser.Espresso6Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.espresso7())
-        op = ctx.ADD().getText() if ctx.ADD() else ctx.SUB().getText()
+        op = ctx.SUB().getText()
         val = self.visit(ctx.espresso6())
         return UnExpr(op, val)
     
