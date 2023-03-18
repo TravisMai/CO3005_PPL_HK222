@@ -104,8 +104,8 @@ class ASTGeneration(MT22Visitor):
     # arraySize: INTEGERLIT COMMA arraySize | INTEGERLIT ;
     def visitArraySize(self, ctx:MT22Parser.ArraySizeContext):
         if ctx.arraySize():
-            return str(int(ctx.INTEGERLIT().getText())) + self.visit(ctx.arraySize())
-        else: return str(int(ctx.INTEGERLIT().getText()))
+            return [int(ctx.INTEGERLIT().getText())] + self.visit(ctx.arraySize())
+        else: return [int(ctx.INTEGERLIT().getText())]
 
     # variNoAuto: INTEGER | FLOAT | BOOLEAN | STRING;
     def visitVariNoAuto(self, ctx: MT22Parser.VariNoAutoContext):
@@ -151,15 +151,13 @@ class ASTGeneration(MT22Visitor):
         fstmt = self.visit(ctx.statement(1)) if ctx.ELSE() else None
         return IfStmt(cond, tstmt, fstmt)
 
-    # forStmt: FOR LB ID ASS espresso COMMA espresso COMMA espresso RB statement;
+    # forStmt: FOR LB assStmt COMMA espresso COMMA espresso RB statement;
     def visitForStmt(self, ctx:MT22Parser.ForStmtContext):
-        id = Id(ctx.ID().getText()) #Id or not ?
-        initStmt = self.visit(ctx.espresso(0))
-        AssSt = AssignStmt(id, initStmt)
+        AssSt = self.visit(ctx.assStmt())
+        expr0 = self.visit(ctx.espresso(0))
         expr1 = self.visit(ctx.espresso(1))
-        expr2 = self.visit(ctx.espresso(2))
         state = self.visit(ctx.statement())
-        return ForStmt(AssSt,expr1,expr2,state)        
+        return ForStmt(AssSt,expr0,expr1,state)        
     
     # whileStmt: WHILE LB espresso RB statement;
     def visitWhileStmt(self, ctx:MT22Parser.WhileStmtContext):
@@ -262,12 +260,12 @@ class ASTGeneration(MT22Visitor):
         val = self.visit(ctx.espresso5())
         return UnExpr(op, val)
     
-    # espresso6: SUB espresso6 | espresso7;
+    # espresso6: SUB (espresso5 | espresso6) | espresso7;
     def visitEspresso6(self, ctx: MT22Parser.Espresso6Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.espresso7())
         op = ctx.SUB().getText()
-        val = self.visit(ctx.espresso6())
+        val = self.visit(ctx.espresso6()) if ctx.espresso6() else self.visit(ctx.espresso5())
         return UnExpr(op, val)
     
     # espresso7: ID LSB expList RSB | espresso10a;
@@ -292,27 +290,6 @@ class ASTGeneration(MT22Visitor):
         elif ctx.arrayLit(): return self.visit(ctx.arrayLit())
         elif ctx.espresso(): return self.visit(ctx.espresso())
         elif ctx.ID(): return Id(ctx.ID().getText()) #Id or not ?
-        
-    # # espresso10b: ID args | espresso11b;
-    # def visitEspresso10b(self, ctx: MT22Parser.Espresso10bContext):
-    #     if ctx.args():
-    #         name = ctx.ID().getText() #Id or not ?
-    #         args = self.visit(ctx.args())
-    #         return FuncCall(name,args)
-    #     return self.visit(ctx.espresso11b())
-
-    # # espresso11b: elem | arrayLit | LB espresso RB | ID;
-    # def visitEspresso11b(self, ctx:MT22Parser.Espresso11bContext):
-    #     if ctx.elem(): return self.visit(ctx.elem())
-    #     elif ctx.arrayLit(): return self.visit(ctx.arrayLit())
-    #     elif ctx.espresso(): return self.visit(ctx.espresso())
-    #     elif ctx.ID(): return ctx.ID().getText() #Id or not ?
-    
-    # # espresso12: espresso12 COMMA elem | elem;
-    # def visitEspresso12(self, ctx: MT22Parser.Espresso12Context):
-    #     if ctx.espresso12():
-    #         return [self.visit(ctx.elem())]+self.visit(ctx.espresso12())
-    #     return [self.visit(ctx.elem())]
 
     # lhs: ID | lhsop;
     def visitLhs(self, ctx: MT22Parser.LhsContext):

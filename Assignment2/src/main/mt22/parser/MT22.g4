@@ -64,7 +64,7 @@ statement:
 assStmt: lhs ASS espresso;
 ifStmt: IF LB espresso RB statement (ELSE statement)?;
 forStmt:
-	FOR LB ID ASS espresso COMMA espresso COMMA espresso RB statement;
+	FOR LB assStmt COMMA espresso COMMA espresso RB statement;
 whileStmt: WHILE LB espresso RB statement;
 doWhileStmt: DO blockStmt WHILE LB espresso RB;
 breakStmt: BREAK;
@@ -84,12 +84,10 @@ espresso2: espresso2 (AND | OR) espresso3 | espresso3;
 espresso3: espresso3 (ADD | SUB) espresso4 | espresso4;
 espresso4: espresso4 (MUL | DIV | MOD) espresso5 | espresso5;
 espresso5: NOT espresso5 | espresso6;
-espresso6: SUB espresso6 | espresso7;
+espresso6: SUB (espresso5 | espresso6) | espresso7;
 espresso7: ID LSB expList RSB | espresso10a;
 espresso10a: ID args | espresso11a;
-// espresso10b: ID args | espresso11b;
 espresso11a: elem | arrayLit | LB espresso RB | ID;
-// espresso11b: elem | arrayLit | LB espresso RB | ID; espresso12: espresso12 COMMA elem | elem;
 lhs: ID | lhsop;
 lhsop: ID LSB (expList | lhsop) RSB;
 
