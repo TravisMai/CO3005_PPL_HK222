@@ -14,16 +14,9 @@ class MT22SupFunc:
     def coercion(typ1, typ2, inherit):
         if type(typ1) == FloatType and type(typ2) == IntegerType:
             return True
-        elif (type(typ1) == IntegerType
-              or type(typ1) == FloatType
-              or type(typ1) == StringType
-              or type(typ1) == ArrayType
-              or type(typ1) == VoidType) and isinstance(typ2, FuncDecl) and type(typ2) == AutoType:
+        elif (type(typ1) in [IntegerType, FloatType, StringType, ArrayType, VoidType]) and isinstance(typ2, FuncDecl) and type(typ2) == AutoType:
             return True
-        elif (type(typ1) == IntegerType
-              or type(typ1) == FloatType
-              or type(typ1) == StringType
-              or type(typ1) == ArrayType) and isinstance(typ2, VarDecl) and type(typ2) == AutoType:
+        elif (type(typ1) in [IntegerType, FloatType, StringType, ArrayType]) and isinstance(typ2, VarDecl) and type(typ2) == AutoType:
             return True
         elif isinstance(typ2, FuncDecl) and isinstance(typ1, FuncDecl):
             inheritFunc = inherit[typ1.name]
@@ -59,10 +52,48 @@ class StaticChecker(Visitor):
         self.ast = ast
         self.inheritance = {}
         self.current = None
-        self.in_loop = False
 
-    def visitBinExpr(self, ast, o): pass
-    def visitUnExpr(self, ast, o): pass
+    def visitBinExpr(self, ast: BinExpr, o):
+        lhs = self.visit(ast.left, o)
+        rhs = self.visit(ast.right, o)
+        if ast.op in ["+", "-", "*", "/"]:
+            if (type(lhs), type(rhs)) == (IntegerType, IntegerType):
+                return FloatType() if ast.op == "/" else IntegerType()
+            elif (type(lhs), type(rhs)) == (FloatType, IntegerType) or (type(lhs), type(rhs)) == (IntegerType, FloatType) or (type(lhs), type(rhs)) == (FloatType, FloatType):
+                return FloatType()
+            else:
+                raise TypeMismatchInExpression(ast)
+        elif ast.op == "%":
+            if (type(lhs), type(rhs)) == (IntegerType, IntegerType):
+                return IntegerType()
+            else:
+                raise TypeMismatchInExpression(ast)
+        elif ast.op in ["&&", "||"]:
+            if (type(lhs), type(rhs)) == (BooleanType, BooleanType):
+                return BooleanType()
+            else:
+                raise TypeMismatchInExpression(ast)
+        elif ast.op == "::":
+            if (type(lhs), type(rhs)) == (StringType, StringType):
+                return StringType()
+            else:
+                raise TypeMismatchInExpression(ast)
+        elif ast.op in ["==", "!=", "<", ">", "<=", ">="]:
+            if (type(lhs), type(rhs)) == (IntegerType, IntegerType) or (type(lhs), type(rhs)) == (FloatType, IntegerType) or (type(lhs), type(rhs)) == (IntegerType, FloatType) or (type(lhs), type(rhs)) == (FloatType, FloatType) or (((type(lhs), type(rhs)) == (IntegerType, IntegerType) or (type(lhs), type(rhs)) == (BooleanType, BooleanType)) and (ast.op in ["==", "!="])):
+                return BooleanType()
+            else:
+                raise TypeMismatchInExpression(ast)
+        else:
+            raise TypeMismatchInExpression(ast)
+
+    def visitUnExpr(self, ast: UnExpr, o):
+        val = self.visit(ast.val, o)
+        if ast.op == "-" and type(val) not in [IntegerType, FloatType]:
+            raise TypeMismatchInExpression(ast)
+        elif ast.op == "!" and type(val) != BooleanType:
+            raise TypeMismatchInExpression(ast)
+        else:
+            return val
 
     def visitId(self, ast: Id, o):
         if "local" in o:
@@ -71,10 +102,13 @@ class StaticChecker(Visitor):
                 ids = list(filter(lambda x: x.name == ast.name, o["global"]))
                 if len(ids) == 0:
                     raise Undeclared(Identifier(), ast.name)
+                return o["global"][ast.name]
+            return o["local"][ast.name]
         else:
             ids = list(filter(lambda x: x.name == ast.name, o["global"]))
             if len(ids) == 0:
                 raise Undeclared(Identifier(), ast.name)
+            return o["global"][ast.name]
 
     def visitArrayCell(self, ast, o): pass
 
@@ -103,12 +137,7 @@ class StaticChecker(Visitor):
     def visitAssignStmt(self, ast, o): pass
     def visitBlockStmt(self, ast, o): pass
     def visitIfStmt(self, ast, o): pass
-
-    def visitForStmt(self, ast: ForStmt, o):
-        self.in_loop = True
-
-        self.in_loop = False
-
+    def visitForStmt(self, ast: ForStmt, o): pass
     def visitWhileStmt(self, ast, o): pass
     def visitDoWhileStmt(self, ast, o): pass
     def visitBreakStmt(self, ast, o): pass
@@ -154,7 +183,8 @@ class StaticChecker(Visitor):
             self.inheritance[ast.name] = None
 
         new_o = o.copy()
-        new_o["local"] = [{}]
+        # new_o["local"] = [{}]
+        new_o["local"] = {}
         for body in ast.body.body:
             if isinstance(body, VarDecl):
                 self.visit(body, (Variable(), new_o))
@@ -166,6 +196,8 @@ class StaticChecker(Visitor):
     def visitProgram(self, ast: Program, o):
         o = {}
         o["global"] = {}
+        o["flag"] = {}
+        o["flag"]["loop"] = False
         has_main = False
         for i in ast.decls:
             self.visit(i, o)
