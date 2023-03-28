@@ -110,7 +110,29 @@ class StaticChecker(Visitor):
                 raise Undeclared(Identifier(), ast.name)
             return o["global"][ast.name]
 
-    def visitArrayCell(self, ast, o): pass
+    def visitArrayCell(self, ast: ArrayCell, o):
+        if "local" in o:
+            ids = list(filter(lambda x: x.name == ast.name, o["local"]))
+            if len(ids) == 0:
+                ids = list(filter(lambda x: x.name == ast.name, o["global"]))
+                if len(ids) == 0:
+                    raise Undeclared(Identifier(), ast.name)
+                arr = o["global"][ast.name]
+            arr = o["local"][ast.name]
+        else:
+            ids = list(filter(lambda x: x.name == ast.name, o["global"]))
+            if len(ids) == 0:
+                raise Undeclared(Identifier(), ast.name)
+            arr = o["global"][ast.name]
+            
+        if type(arr.type) != ArrayType:
+            raise TypeMismatchInExpression(ast)
+        
+        for cell in ast.cell:
+            espresso = self.visit(cell, o)
+            if type(espresso) != IntegerType:
+                raise TypeMismatchInExpression(ast)
+        return type(arr)
 
     def visitIntegerLit(self, ast: IntegerType, o):
         return IntegerType()
@@ -149,10 +171,7 @@ class StaticChecker(Visitor):
 
     def visitVarDecl(self, ast: VarDecl, o):
         var_type = self.visit(ast.typ, o)
-        if ast.init != None:
-            var_init = self.visit(ast.init, o)
-        else:
-            var_init = None
+        var_init = None if ast.init == None else self.visit(ast.init, o)
         if "local" not in o:
             if ast.name in o["global"]:
                 raise Redeclared(Variable(), ast.name)
