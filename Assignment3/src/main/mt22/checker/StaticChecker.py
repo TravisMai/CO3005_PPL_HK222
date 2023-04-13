@@ -2,6 +2,8 @@ from Visitor import Visitor
 from AST import *
 from StaticError import *
 from functools import *
+from typing import Dict, Any
+from abc import ABC
 
 # chưa xử lý phần nonlocal
 # chưa xử lý phần auto type
@@ -39,23 +41,32 @@ class MT22SupFunc:
 
 
 class Function_op:
-    def __init__(self):
-        self.variable = {}
-        self.statement = {}
-        self.parameter = {}
-
+    parameter = {}
+    
+    def __init__(self, ftype: Type, inherit: str or None):
+        self.type = ftype
+        self.inherit = inherit
 
 class Variable_op:
-    def __init__(self):
-        self.type = None
-        self.init = None
-
-    def insertVarValue(self, var_type, var_init):
+    def __init__(self, var_type: Type, var_init: Expr or None):
         self.type = var_type
         self.init = var_init
 
+class Params_op:
+    def __init__(self, typ: Type, out: bool = False, inherit: bool = False):
+        self.typ = typ
+        self.out = out
+        self.inherit = inherit
+
 
 class StaticChecker(Visitor):
+    func_flag = False
+    loop_flag = False
+    local_index = 0
+ 
+    def check(self):
+        return self.visitProgram(self.ast, [])
+    
     def __init__(self, ast):
         self.ast = ast
         self.inheritance = {}
@@ -105,7 +116,7 @@ class StaticChecker(Visitor):
 
     def visitId(self, ast: Id, o):
         if "local" in o:
-            index = o["flag"]["local_index"]
+            index = self.local_index
             ids = list()
             for i in range(index, -1, -1):
                 ids += list(filter(lambda x: x.name ==
@@ -126,7 +137,7 @@ class StaticChecker(Visitor):
 
     def visitArrayCell(self, ast: ArrayCell, o):
         if "local" in o:
-            index = o["flag"]["local_index"]
+            index = self.local_index
             ids = list()
             for i in range(index, -1, -1):
                 ids += list(filter(lambda x: x.name ==
@@ -136,9 +147,10 @@ class StaticChecker(Visitor):
                 if len(idss) == 0:
                     raise Undeclared(Identifier(), ast.name)
                 arr = o["global"][ast.name]
-            for i in range(index, -1, -1):
-                if ast.name in o["local"][i]:
-                    return o["local"][i][ast.name]
+            else:
+                for i in range(index, -1, -1):
+                    if ast.name in o["local"][i]:
+                        arr = o["local"][i][ast.name]
         else:
             ids = list(filter(lambda x: x.name == ast.name, o["global"]))
             if len(ids) == 0:
@@ -152,7 +164,7 @@ class StaticChecker(Visitor):
             espresso = self.visit(cell, o)
             if type(espresso) != IntegerType:
                 raise TypeMismatchInExpression(ast)
-        return type(arr)
+        return arr
 
     def visitIntegerLit(self, ast: IntegerLit, o):
         return IntegerType()
@@ -176,7 +188,29 @@ class StaticChecker(Visitor):
 
     def visitFuncCall(self, ast, o): pass
 
-    def visitAssignStmt(self, ast, o): pass
+    def visitAssignStmt(self, ast: AssignStmt, o):
+        if type(ast.rhs) == CallStmt or type(ast.rhs) == ArrayCell:
+            rhs = self.visit(ast.rhs, o)
+            type_rhs = type(rhs)
+        else:
+            rhs = ast.rhs.accept(self, o)
+            type_rhs = rhs.type
+
+        lhs = self.visit(ast.lhs, o)
+        type_lhs = rhs.type
+
+        if type_lhs == ArrayType:
+            raise TypeMismatchInStatement(ast)
+        elif (type_lhs == AutoType) and (type_rhs == AutoType):
+            raise TypeMismatchInStatement(ast)
+        elif (type_lhs == AutoType) and (type_rhs != AutoType):
+            lhs.type = rhs.type
+        elif (type_lhs != AutoType) and (type_rhs == AutoType):
+            rhs.type = lhs.type
+        elif (type_lhs != AutoType) and (type_rhs != AutoType):
+            if type_lhs != type_rhs:
+                raise TypeMismatchInStatement(ast)
+
     def visitBlockStmt(self, ast, o): pass
     def visitIfStmt(self, ast, o): pass
     def visitForStmt(self, ast: ForStmt, o): pass
@@ -189,64 +223,100 @@ class StaticChecker(Visitor):
     def visitCallStmt(self, ast: CallStmt, o): pass
 
     def visitVarDecl(self, ast: VarDecl, o):
-        var_type = self.visit(ast.typ, o)
+        
+        var_type = ast.typ
         var_init = None if ast.init == None else self.visit(ast.init, o)
-        index = o["flag"]["local_index"]
+        index = self.local_index
+        print((var_type))
+        print(var_init)
         if "local" not in o:
             if ast.name in o["global"]:
                 raise Redeclared(Variable(), ast.name)
-            if var_init == None and type(var_type) == AutoType:
+            if var_init == None and var_type == AutoType:
                 raise Invalid(Variable(), ast.name)
             else:
-                o["global"][ast.name] = Variable_op()
-                o["global"][ast.name].insertVarValue(var_type, var_init)
+                o["global"][ast.name] = Variable_op(var_type, var_init)
         else:
+            # for i in range(index, -1, -1):
+            #     ids = list(filter(lambda x: x.name == ast.name, o["local"][i]))
+            #     if len(ids) > 0: 
+            #         raise Redeclared(Variable(), ast.name)
+                
+            ids = list()
             for i in range(index, -1, -1):
-                if ast.name in o["local"][i]:
+                ids += list(filter(lambda x: x.name ==
+                            ast.name, o["local"][i]))
+            if len(ids) > 0:
+                idss = list(filter(lambda x: x.name == ast.name, o["global"]))
+                if len(idss) > 0:
                     raise Redeclared(Variable(), ast.name)
+                
             if var_init == None and type(var_type) == AutoType:
                 raise Invalid(Variable(), ast.name)
             else:
-                o["local"][index][ast.name] = Variable_op()
-                o["local"][index][ast.name].insertVarValue(var_type, var_init)
+                o["local"][index][ast.name] = Variable_op(var_type, var_init)
 
         if ast.init != None:
             if not MT22SupFunc.compare(var_type, var_init) and not MT22SupFunc.coercion(var_init, var_type, self.inheritance):
                 raise TypeMismatchInStatement(ast)
 
-    def visitParamDecl(self, ast, o): pass
+    def visitParamDecl(self, ast: ParamDecl, o):
+        if self.func_flag == False:
+            if ast.name in o:
+                raise Redeclared(Parameter(), ast.name)
+            
+            o[ast.name] = Params_op(ast.typ,ast.out,ast.inherit)
+            # còn khúc check lỗi của params
+            
+        else:
+            o[ast.name] = Params_op(ast.typ,ast.out,ast.inherit)
 
     def visitFuncDecl(self, ast: FuncDecl, o):
-        if ast.name in o["global"]:
-            raise Redeclared(Function(), ast.name)
-        o["global"][ast.name] = Function_op()
-        self.current = ast.name
-        if ast.inherit != None:
-            if ast.inherit not in o["global"]:
+        if self.func_flag == False:
+            if ast.name in o["global"]:
+                raise Redeclared(Function(), ast.name)
+            
+            if ast.inherit != None and ast.inherit not in o["inherit"]:
                 raise Undeclared(Function(), ast.inherit)
-            self.inheritance[ast.name] = ast.inherit
+            
+            o["global"][ast.name] = Function_op(ast.return_type, ast.inherit)
+            
+            for params in ast.params:
+                self.visit(params, o["global"][ast.name].parameter)
+                
+            self.local_index = 0
+            new_o = o.copy()
+            new_o["local"] = {}
+            new_o["local"][0] = {}
+            for body in ast.body.body:
+                if type(body) is ReturnStmt:  # cần fix khúc này để check return type của function
+                    self.visit(body, new_o)
+                else:
+                    self.visit(body, new_o)
+
+            self.current = None
         else:
-            self.inheritance[ast.name] = None
-
-        o["flag"]["local_index"] = 0
-        new_o = o.copy()
-        # new_o["local"] = [{}]
-        new_o["local"][o["flag"]["local_index"]] = {}
-        for body in ast.body.body:
-            if isinstance(body, VarDecl):
-                self.visit(body, (VarDecl(), new_o))
-            elif isinstance(body, Stmt):
-                self.visit(body, (Stmt(), new_o))
-
-        self.current = None
+            if ast.name in o:
+                raise Redeclared(Function(), ast.name)
+            
+            o[ast.name] = Function_op(ast.return_type, None)
+            for params in ast.params:
+                self.visit(params, o[ast.name].parameter)
 
     def visitProgram(self, ast: Program, o):
         o = {}
         o["global"] = {}
-        o["flag"] = {}
-        o["flag"]["loop"] = False
-        o["flag"]["local_index"] = 0
+        o["inherit"] = {}
+        self.loop_flag = False
+        self.local_index = 0
         has_main = False
+        
+        self.func_flag =  True
+        for i in ast.decls:
+            if type(i) == FuncDecl:
+                self.visit(i, o["inherit"])
+            
+        self.func_flag = False        
         for i in ast.decls:
             self.visit(i, o)
             if type(i) == FuncDecl and i.name == "main":
