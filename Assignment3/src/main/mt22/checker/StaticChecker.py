@@ -2,7 +2,6 @@ from Visitor import Visitor
 from AST import *
 from StaticError import *
 from functools import *
-from typing import Dict, Any
 from abc import ABC
 
 # chưa xử lý phần nonlocal
@@ -223,16 +222,15 @@ class StaticChecker(Visitor):
     def visitCallStmt(self, ast: CallStmt, o): pass
 
     def visitVarDecl(self, ast: VarDecl, o):
-        
+        # print(ast.init)
+        # print(type(self.visit(ast.init, o)))
         var_type = ast.typ
-        var_init = None if ast.init == None else self.visit(ast.init, o)
+        var_init = self.visit(ast.init, o) if ast.init else None
         index = self.local_index
-        print((var_type))
-        print(var_init)
         if "local" not in o:
             if ast.name in o["global"]:
                 raise Redeclared(Variable(), ast.name)
-            if var_init == None and var_type == AutoType:
+            if var_init is None and type(var_type) == AutoType:
                 raise Invalid(Variable(), ast.name)
             else:
                 o["global"][ast.name] = Variable_op(var_type, var_init)
@@ -251,12 +249,15 @@ class StaticChecker(Visitor):
                 if len(idss) > 0:
                     raise Redeclared(Variable(), ast.name)
                 
-            if var_init == None and type(var_type) == AutoType:
+            if var_init is None and type(var_type) == AutoType:
                 raise Invalid(Variable(), ast.name)
             else:
                 o["local"][index][ast.name] = Variable_op(var_type, var_init)
 
-        if ast.init != None:
+        # if ast.typ is FloatType:
+        #     print("lmeoasdasdasd")
+        # else: raise TypeMismatchInStatement(ast)
+        if ast.init is not None:
             if not MT22SupFunc.compare(var_type, var_init) and not MT22SupFunc.coercion(var_init, var_type, self.inheritance):
                 raise TypeMismatchInStatement(ast)
 
@@ -276,7 +277,7 @@ class StaticChecker(Visitor):
             if ast.name in o["global"]:
                 raise Redeclared(Function(), ast.name)
             
-            if ast.inherit != None and ast.inherit not in o["inherit"]:
+            if ast.inherit is not None and ast.inherit not in o["inherit"]:
                 raise Undeclared(Function(), ast.inherit)
             
             o["global"][ast.name] = Function_op(ast.return_type, ast.inherit)
@@ -313,13 +314,14 @@ class StaticChecker(Visitor):
         
         self.func_flag =  True
         for i in ast.decls:
+            print(type(i))
             if type(i) == FuncDecl:
                 self.visit(i, o["inherit"])
             
         self.func_flag = False        
         for i in ast.decls:
             self.visit(i, o)
-            if type(i) == FuncDecl and i.name == "main":
+            if type(i) is FuncDecl and i.name == "main":
                 has_main = True
         if has_main == False:
             raise NoEntryPoint()
