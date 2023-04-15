@@ -1,4 +1,10 @@
-Program([
-	VarDecl(x, IntegerType, IntegerLit(1))
-	FuncDecl(main, VoidType, [], None, BlockStmt([]))
-])
+
+        
+        main:function float () {
+            {
+                x: float;
+                //x:integer;
+            }
+            x: integer = 1;
+        }
+        //x:auto = "3";

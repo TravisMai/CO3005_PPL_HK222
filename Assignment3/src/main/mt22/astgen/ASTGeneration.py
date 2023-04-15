@@ -13,7 +13,7 @@ class ASTGeneration(MT22Visitor):
     def visitDeclares (self, ctx:MT22Parser.DeclaresContext):
         if ctx.declares():
             return list(self.visit(ctx.declare()))+ self.visit(ctx.declares())
-        return list(self.visit(ctx.declare()))
+        return self.visit(ctx.declare())
 
     # declare: funcDecl | variableDeclList;
     def visitDeclare(self, ctx: MT22Parser.DeclareContext):
@@ -61,7 +61,7 @@ class ASTGeneration(MT22Visitor):
             yesId = variYes[:mid_index]
             yesEss = variYes[mid_index+1:]
             yesTyp = variYes[mid_index]
-            combined = [[str(a), str(b)] for a, b in zip(yesId, yesEss)]
+            combined = [[a, b] for a, b in zip(yesId, yesEss)]
             return [VarDecl(x[0], yesTyp, x[1]) for x in combined]
 
     # varia_no_body: ID COMMA varia_no_body | ID ;
