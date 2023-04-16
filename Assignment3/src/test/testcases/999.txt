@@ -1,10 +1,10 @@
 
         
-        main:function float () {
-            {
-                x: float;
-                //x:integer;
-            }
-            x: integer = 1;
+        main:function void () {
+            n: integer;
+            x,y,z: float;
+            if((x<y) && (y < 9) && (z != 10)) z = 456;
+            else z = 34576;
+            
         }
         //x:auto = "3";

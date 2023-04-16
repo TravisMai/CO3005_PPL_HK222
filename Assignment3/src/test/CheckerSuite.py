@@ -5,7 +5,7 @@ from AST import *
 class CheckerSuite(unittest.TestCase):
 #     def test_CS400(self):
 #         input = Program([
-# 	FuncDecl("main", VoidType(), [], None, BlockStmt([]))
+#  	FuncDecl("main", VoidType(), [], None, BlockStmt([]))
 # ])
 #         expect = ""
 #         self.assertTrue(TestChecker.test(input, expect, 400))
@@ -34,18 +34,13 @@ class CheckerSuite(unittest.TestCase):
 #         self.assertTrue(TestChecker.test(input, expect, 403))
         
     def test_CS999(self):
-#         input = Program([
-# 	VarDecl("x", IntegerType(), IntegerLit(1)),
-# 	FuncDecl("main", VoidType(), [], None, BlockStmt([]))
-# ])
-        input = """
-        
-        main:function float () {
-            {
-                x: float;
-                //x:integer;
-            }
-            x: integer = 1;
+        input = """        
+        main:function void () {
+            n: integer;
+            x,y,z: float;
+            if((x<y) && (y < 9) && (z != 10)) z = 456;
+            else z = 34576;
+            
         }
         //x:auto = "3";"""
         expect = ""
