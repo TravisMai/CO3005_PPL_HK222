@@ -35,23 +35,19 @@ class CheckerSuite(unittest.TestCase):
         
     def test_CS999(self):
         input = """
-        x: integer = 3; 
+        x: integer = 3;
         main:function void () {
             n: integer;
             x,y,z: float;
             {
-                x:string;
+                {
+                    
+                }
+                x = n;
             }
             if((x<y) && (y < 9) && (z != 10)) z = 456;
             else z = 34576;
             
-        }
-        foo: function integer() {
-            do{
-                x = x + 1;
-            }
-            while (x == 1);
-            return 34;
         }
         //x:auto = "3";"""
         expect = ""
