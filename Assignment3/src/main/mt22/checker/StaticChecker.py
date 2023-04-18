@@ -5,7 +5,7 @@ from functools import *
 from abc import ABC
 
 # chưa xử lý xong các thể loại Array
-# for funcall callfunction
+# callfunction
 # chưa xử lý phần check inherit (đã tạo phần check rồi nhưng chưa check)
 # chưa xử lý phần inherit của param (hướng đi: truyền xuống tuple)
 # chưa check inherit first statement
@@ -173,20 +173,24 @@ class StaticChecker(Visitor):
 
     def visitId(self, ast: Id, o):
         index = self.local_index
-        if "local" not in o:
-            if ast.name not in o["global"]:
-                raise Undeclared(Identifier(), ast.name)
+        if self.for_flag == False:
+            if "local" not in o:
+                if ast.name not in o["global"]:
+                    raise Undeclared(Identifier(), ast.name)
 
-            return o["global"][ast.name]
-        else:
-            for i in range(index, -1, -1):
-                if ast.name in o["local"][i]:
-                    return o["local"][i][ast.name]
-
-            if ast.name in o["global"]:
                 return o["global"][ast.name]
+            else:
+                for i in range(index, -1, -1):
+                    if ast.name in o["local"][i]:
+                        return o["local"][i][ast.name]
 
-            raise Undeclared(Identifier(), ast.name)
+                if ast.name in o["global"]:
+                    return o["global"][ast.name]
+
+                raise Undeclared(Identifier(), ast.name)
+        else:
+            self.visit(VarDecl(ast.name, IntegerType(), None), o)
+            return o["local"][self.local_index][ast.name]
 
         # if "local" in o:
         #     index = self.local_index
@@ -270,33 +274,40 @@ class StaticChecker(Visitor):
         # else:
         #     rhs = ast.rhs.accept(self, o)
         #     type_rhs = rhs
-        if self.for_flag is False:
-            lhs = MT22SupFunc.return_type(self.visit(ast.lhs, o))
-            rhs = MT22SupFunc.return_type(self.visit(ast.rhs, o))
-            # type_lhs = lhs.type
-            # type_rhs = lhs
-            # print(ast.lhs)
-            # print(ast.rhs)
-            # print("\n")
-            # print(lhs)
-            # print(rhs)
-            # print("\n")
-            # print(type(lhs))
-            # print(type(rhs))
-            if type(lhs) == ArrayType:
+
+        # if self.for_flag == False:
+        lhs = MT22SupFunc.return_type(self.visit(ast.lhs, o))
+        rhs = MT22SupFunc.return_type(self.visit(ast.rhs, o))
+        if self.for_flag == True:
+            if type(lhs) == type(rhs):
+                return lhs
+            else:
+                return None
+        # type_lhs = lhs.type
+        # type_rhs = lhs
+        # print(ast.lhs)
+        # print(ast.rhs)
+        # print("\n")
+        # print(lhs)
+        # print(rhs)
+        # print("\n")
+        # print(type(lhs))
+        # print(type(rhs))
+        if type(lhs) == ArrayType or type(lhs) == VoidType:
+            raise TypeMismatchInStatement(ast)
+        elif (type(lhs) == AutoType) and (type(rhs) == AutoType):
+            raise TypeMismatchInStatement(ast)
+        elif (type(lhs) == AutoType) and (type(rhs) != AutoType):
+            lhs = rhs
+        elif (type(lhs) != AutoType) and (type(rhs) == AutoType):
+            rhs = lhs
+        elif (type(lhs) != AutoType) and (type(rhs) != AutoType):
+            if (type(lhs) != type(rhs)) and (type(lhs) != FloatType) and (type(rhs) != IntegerType):
                 raise TypeMismatchInStatement(ast)
-            elif (type(lhs) == AutoType) and (type(rhs) == AutoType):
-                raise TypeMismatchInStatement(ast)
-            elif (type(lhs) == AutoType) and (type(rhs) != AutoType):
-                lhs = rhs
-            elif (type(lhs) != AutoType) and (type(rhs) == AutoType):
-                rhs = lhs
-            elif (type(lhs) != AutoType) and (type(rhs) != AutoType):
-                if (type(lhs) != type(rhs)) and (type(lhs) != FloatType) and (type(rhs) != IntegerType):
-                    raise TypeMismatchInStatement(ast)
-        else:
-            rhs = MT22SupFunc.return_type(self.visit(ast.rhs, o))
-            return rhs
+        # else:
+        #     rhs = MT22SupFunc.return_type(self.visit(ast.rhs, o))
+        #     self.visit(VarDecl(ast.init,IntegerType(),None),new_o_for)
+        #     return rhs
 
     def visitBlockStmt(self, ast: BlockStmt, o):
         self.enter_scope()
@@ -324,10 +335,12 @@ class StaticChecker(Visitor):
 
     def visitForStmt(self, ast: ForStmt, o):
         self.enter_loop()
+        self.enter_scope()
         self.for_flag = True
         new_o_for = o.copy()
+        new_o_for["local"][self.local_index] = {}
         init = self.visit(ast.init, new_o_for)
-
+        self.for_flag = False
         # phần cùa condition
 
         updt = self.visit(ast.upd, new_o_for)
@@ -337,7 +350,7 @@ class StaticChecker(Visitor):
         self.visit(ast.stmt, new_o_for)
 
         del new_o_for
-        self.for_flag = False
+        self.enter_scope()
         self.exit_loop()
 
     def visitWhileStmt(self, ast: WhileStmt, o):
@@ -388,10 +401,14 @@ class StaticChecker(Visitor):
         if len(o["global"][ast.name].parameter) != len(ast.args):
             raise TypeMismatchInStatement(ast)
 
-        for param, value in zip(o["global"][ast.name].parameter.value(), ast.args):
-            if type(param.typ) != type(value):
+        param_typ_list = []
+        for key in o["global"][ast.name].parameter:
+            param_typ_list.append(o["global"][ast.name].parameter[key].typ)
+
+        for i in range(len(param_typ_list)):
+            if type(param_typ_list[i]) != type(self.visit(ast.args[i], o)):
                 raise TypeMismatchInStatement(ast)
-        
+
         if type(o["global"][ast.name].type) is not (VoidType or AutoType):
             raise TypeMismatchInStatement(ast)
 
@@ -416,6 +433,7 @@ class StaticChecker(Visitor):
                     o["global"][ast.name] = Variable_op(var_type, var_init)
             else:
                 if ast.name in o["local"][index]:
+                    print(o)
                     raise Redeclared(Variable(), ast.name)
 
                 # for i in range(index, -1, -1):

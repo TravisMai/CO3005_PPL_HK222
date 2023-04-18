@@ -36,6 +36,7 @@ class CheckerSuite(unittest.TestCase):
     def test_CS999(self):
         input = """
         x: integer = 3;
+        foo: function void(x:float){}
         main:function void () {
             n: integer;
             x,y,z: float;
@@ -47,8 +48,11 @@ class CheckerSuite(unittest.TestCase):
             }
             if((x<y) && (y < 9) && (z != 10)) z = 456;
             else z = 34576;
+            foo(1.3);
             
         }
+        
+        
         //x:auto = "3";"""
         expect = ""
         self.assertTrue(TestChecker.test(input, expect, 999))
