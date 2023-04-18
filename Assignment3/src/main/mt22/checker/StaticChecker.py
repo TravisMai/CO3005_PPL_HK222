@@ -6,8 +6,6 @@ from abc import ABC
 
 # chưa xử lý xong các thể loại Array
 # callfunction
-# chưa xử lý phần check inherit (đã tạo phần check rồi nhưng chưa check)
-# chưa xử lý phần inherit của param (hướng đi: truyền xuống tuple)
 # chưa check inherit first statement
 
 
@@ -102,6 +100,11 @@ class StaticChecker(Visitor):
 
     def exit_scope(self):
         self.local_index -= 1
+
+    def retrieve_inherit(self, parent, child):
+        for i in parent:
+            if parent[i].inherit == True:
+                child[i] = parent[i]
 
     def check(self):
         return self.visitProgram(self.ast, [])
@@ -396,7 +399,7 @@ class StaticChecker(Visitor):
 
     def visitCallStmt(self, ast: CallStmt, o):
         if ast.name not in o["global"]:
-            raise Undeclared(Function(), o)
+            raise Undeclared(Function(), ast)
 
         if len(o["global"][ast.name].parameter) != len(ast.args):
             raise TypeMismatchInStatement(ast)
@@ -433,7 +436,6 @@ class StaticChecker(Visitor):
                     o["global"][ast.name] = Variable_op(var_type, var_init)
             else:
                 if ast.name in o["local"][index]:
-                    print(o)
                     raise Redeclared(Variable(), ast.name)
 
                 # for i in range(index, -1, -1):
@@ -470,10 +472,8 @@ class StaticChecker(Visitor):
         # print(o)
 
     def visitParamDecl(self, ast: ParamDecl, o):
-        # # print(o)
         if self.func_flag == False:
             if ast.name in o:
-                # # print("dsadasd")
                 raise Redeclared(Parameter(), ast.name)
 
             # # print(o)
@@ -481,23 +481,32 @@ class StaticChecker(Visitor):
             # còn khúc check lỗi của params
 
         else:
+            if ast.name in o:
+                raise Redeclared(Parameter(), ast.name)
+
             o[ast.name] = Params_op(ast.typ, ast.out, ast.inherit)
-            # # print(o)
 
     def visitFuncDecl(self, ast: FuncDecl, o):
         if self.func_flag == False:
             if ast.name in o["global"]:
                 raise Redeclared(Function(), ast.name)
 
-            if ast.inherit is not None and ast.inherit not in self.funclist:
-                raise Undeclared(Function(), ast.inherit)
-
             o["global"][ast.name] = Function_op(ast.return_type, ast.inherit)
+
+            if ast.inherit is not None:
+                if ast.inherit not in self.funclist:
+                    raise Undeclared(Function(), ast.inherit)
+                else:
+                    self.retrieve_inherit(
+                        self.funclist[ast.inherit].parameter, o["global"][ast.name].parameter)
 
             self.current = ast.name
             if ast.params != []:
                 for params in ast.params:
                     self.visit(params, o["global"][ast.name].parameter)
+                    
+            # print(o["global"][ast.name].parameter)
+            # print("\n")
 
             self.local_index = 0
             new_o = o.copy()
@@ -509,8 +518,6 @@ class StaticChecker(Visitor):
                 else:
                     self.visit(body, new_o)
             del new_o
-            # # print("\ndictionary sau khi nhập xong function: ")
-            # # print(new_o)
 
         else:
             if ast.name in o:
@@ -549,6 +556,6 @@ class StaticChecker(Visitor):
                 has_main = True
 
         # print("\ndictionary cua program sau khi nhập xong hết: ")
-        print(o)
+        # print(o)
         if has_main == False:
             raise NoEntryPoint()

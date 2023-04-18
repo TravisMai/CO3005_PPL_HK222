@@ -36,7 +36,7 @@ class CheckerSuite(unittest.TestCase):
     def test_CS999(self):
         input = """
         x: integer = 3;
-        foo: function void(x:float){}
+        foo1: function void( x:float,inherit y: string){}
         main:function void () {
             n: integer;
             x,y,z: float;
@@ -48,8 +48,11 @@ class CheckerSuite(unittest.TestCase):
             }
             if((x<y) && (y < 9) && (z != 10)) z = 456;
             else z = 34576;
-            foo(1.3);
+            //foo1(1.3);
             
+        }
+        foo:function void(z:auto) inherit foo1{
+            readBoolean();
         }
         
         
