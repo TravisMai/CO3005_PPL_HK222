@@ -34,9 +34,10 @@ class CheckerSuite(unittest.TestCase):
 #         self.assertTrue(TestChecker.test(input, expect, 403))
         
     def test_CS999(self):
-        input = """
+        input = """/*
         x: integer = 3;
-        foo1: function void( x:float,inherit y: string){}
+        //foo1: function void( x:float,inherit y: string){}
+        foo2: function auto(){return 2.3;}
         main:function void () {
             n: integer;
             x,y,z: float;
@@ -48,13 +49,21 @@ class CheckerSuite(unittest.TestCase):
             }
             if((x<y) && (y < 9) && (z != 10)) z = 456;
             else z = 34576;
-            //foo1(1.3);
+            foo1(2.3,"abc");
             
         }
+        foo1: function void( x:float,inherit y: string){}
         foo:function void(z:auto) inherit foo1{
-            readBoolean();
+            x = readInteger();
+            for(i = 1, i < 10, i + 1){
+                
+            }
         }
-        
+        */
+        main: function void(){
+            super(1,2);
+            
+        }
         
         //x:auto = "3";"""
         expect = ""

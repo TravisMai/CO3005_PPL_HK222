@@ -5,23 +5,23 @@ from functools import *
 from abc import ABC
 
 # chưa xử lý xong các thể loại Array
-# callfunction
 # chưa check inherit first statement
+# a[2,3] = {{1,2,3},{1,2,3}}
 
 
 class MT22SupFunc:
     @staticmethod
     def insert_glo_func(scope):
-        scope["readInteger"] = Glo_func(None, IntegerType())
-        scope["printInteger"] = Glo_func(IntegerType(), VoidType())
-        scope["readFloat"] = Glo_func(None, FloatType())
-        scope["writeFloat"] = Glo_func(FloatType(), VoidType())
-        scope["readBoolean"] = Glo_func(None, BooleanType())
-        scope["printBoolean"] = Glo_func(BooleanType(), VoidType())
-        scope["readString"] = Glo_func(None, StringType())
-        scope["printString"] = Glo_func(StringType(), VoidType())
-        scope["super"] = Glo_func(None, VoidType())
-        scope["preventDefault"] = Glo_func(None, VoidType())
+        scope["readInteger"] = Glo_func([], IntegerType())
+        scope["printInteger"] = Glo_func([IntegerType()], VoidType())
+        scope["readFloat"] = Glo_func([], FloatType())
+        scope["writeFloat"] = Glo_func([FloatType()], VoidType())
+        scope["readBoolean"] = Glo_func([], BooleanType())
+        scope["printBoolean"] = Glo_func([BooleanType()], VoidType())
+        scope["readString"] = Glo_func([], StringType())
+        scope["printString"] = Glo_func([StringType()], VoidType())
+        scope["super"] = Glo_func([], VoidType())
+        scope["preventDefault"] = Glo_func([], VoidType())
 
     @staticmethod
     def compare(typ1, typ2):
@@ -80,9 +80,9 @@ class Params_op:
 
 
 class Glo_func:
-    def __init__(self, input_typ: Type or None, return_typ: Type or None):
-        self.itype = input_typ
-        self.rtype = return_typ
+    def __init__(self, input_typ: List, return_typ: Type or None):
+        self.parameter = input_typ
+        self.type = return_typ
 
 
 class StaticChecker(Visitor):
@@ -266,7 +266,32 @@ class StaticChecker(Visitor):
                 raise IllegalArrayLiteral(ast)
         return ArrayType([], type(type_of_array_element[0]))
 
-    def visitFuncCall(self, ast, o): pass
+    def visitFuncCall(self, ast: FuncCall, o):
+        if ast.name not in self.funclist:
+            if ast.name not in self.glo_envi:
+                raise Undeclared(Function(), ast)
+            else:
+                glo_envi_call = True
+                call_temp = self.glo_envi[ast.name]
+        else:
+            glo_envi_call = False
+            call_temp = self.funclist[ast.name]
+
+        if len(call_temp.parameter) != len(ast.args):
+            raise TypeMismatchInExpression(ast)
+
+        param_typ_list = []
+        if glo_envi_call == False:
+            for key in call_temp.parameter:
+                param_typ_list.append(call_temp.parameter[key].typ)
+        else:
+            param_typ_list = call_temp.parameter
+
+        for i in range(len(param_typ_list)):
+            if type(param_typ_list[i]) != type(self.visit(ast.args[i], o)):
+                raise TypeMismatchInExpression(ast)
+
+        return call_temp.type
 
 ########################## STATEMENT ##########################
 
@@ -344,10 +369,10 @@ class StaticChecker(Visitor):
         new_o_for["local"][self.local_index] = {}
         init = self.visit(ast.init, new_o_for)
         self.for_flag = False
-        # phần cùa condition
 
+        cond = self.visit(ast.cond, new_o_for)
         updt = self.visit(ast.upd, new_o_for)
-        if type(updt) != IntegerType or type(init) != IntegerType:
+        if type(updt) != IntegerType or type(init) != IntegerType or type(cond) != BooleanType:
             raise TypeMismatchInStatement(ast)
 
         self.visit(ast.stmt, new_o_for)
@@ -398,26 +423,35 @@ class StaticChecker(Visitor):
         del new_o_return
 
     def visitCallStmt(self, ast: CallStmt, o):
-        if ast.name not in o["global"]:
-            raise Undeclared(Function(), ast)
+        if ast.name not in self.funclist:
+            if ast.name not in self.glo_envi:
+                raise Undeclared(Function(), ast)
+            else:
+                glo_envi_call = True
+                call_temp = self.glo_envi[ast.name].parameter
+        else:
+            glo_envi_call = False
+            call_temp = self.funclist[ast.name].parameter
 
-        if len(o["global"][ast.name].parameter) != len(ast.args):
+        if len(call_temp) != len(ast.args):
             raise TypeMismatchInStatement(ast)
 
         param_typ_list = []
-        for key in o["global"][ast.name].parameter:
-            param_typ_list.append(o["global"][ast.name].parameter[key].typ)
+        if glo_envi_call == False:
+            for key in call_temp:
+                param_typ_list.append(call_temp[key].typ)
+        else:
+            param_typ_list = call_temp
 
         for i in range(len(param_typ_list)):
             if type(param_typ_list[i]) != type(self.visit(ast.args[i], o)):
                 raise TypeMismatchInStatement(ast)
 
-        if type(o["global"][ast.name].type) is not (VoidType or AutoType):
-            raise TypeMismatchInStatement(ast)
+        # if type(o["global"][ast.name].type) is not (VoidType or AutoType):
+        #     raise TypeMismatchInStatement(ast)
 
 
 ########################## DECL ##########################
-
 
     def visitVarDecl(self, ast: VarDecl, o):
         var_type = ast.typ
@@ -476,7 +510,7 @@ class StaticChecker(Visitor):
             if ast.name in o:
                 raise Redeclared(Parameter(), ast.name)
 
-            # # print(o)
+            # print(o)
             o[ast.name] = Params_op(ast.typ, ast.out, ast.inherit)
             # còn khúc check lỗi của params
 
@@ -497,14 +531,18 @@ class StaticChecker(Visitor):
                 if ast.inherit not in self.funclist:
                     raise Undeclared(Function(), ast.inherit)
                 else:
-                    self.retrieve_inherit(
-                        self.funclist[ast.inherit].parameter, o["global"][ast.name].parameter)
+                    if len(self.funclist[ast.inherit].parameter) == 0:
+                        if ast.body.body[0].name != "preventDefault":
+                            raise
+                    else:
+                        self.retrieve_inherit(
+                            self.funclist[ast.inherit].parameter, o["global"][ast.name].parameter)
 
             self.current = ast.name
             if ast.params != []:
                 for params in ast.params:
                     self.visit(params, o["global"][ast.name].parameter)
-                    
+
             # print(o["global"][ast.name].parameter)
             # print("\n")
 
@@ -532,7 +570,6 @@ class StaticChecker(Visitor):
 
 
 ########################## WHERE ITS START ##########################
-
 
     def visitProgram(self, ast: Program, o):
         o = {}

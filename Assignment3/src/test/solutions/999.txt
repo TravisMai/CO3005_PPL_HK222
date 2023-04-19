@@ -1,1 +1,1 @@
-Undeclared Function: CallStmt(readBoolean, )
+Type mismatch in statement: CallStmt(super, IntegerLit(1), IntegerLit(2))
