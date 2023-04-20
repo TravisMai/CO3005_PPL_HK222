@@ -4,8 +4,7 @@ from StaticError import *
 from functools import *
 from abc import ABC
 
-# chưa xử lý xong các thể loại Array
-# a[2,3] = {{1,2,3},{1,2,3}}
+# còn kiểu trả về của array cell
 
 
 class MT22SupFunc:
@@ -36,6 +35,8 @@ class MT22SupFunc:
     def return_type(type_util):
         if type(type_util) == Variable_op or type(type_util) == Function_op:
             return type_util.type
+        elif type(type_util) == Params_op:
+            return type_util.typ
         else:
             return type_util
 
@@ -115,7 +116,10 @@ class StaticChecker(Visitor):
         self.glo_envi = {}
         self.func_flag = False
         self.for_flag = False
+        self.array_flag = False
         self.current = None
+        self.array_return = None
+        self.array_scope = None
         self.in_loop = 0
         self.local_index = 0
 
@@ -179,8 +183,8 @@ class StaticChecker(Visitor):
             if "local" not in o:
                 if ast.name not in o["global"]:
                     raise Undeclared(Identifier(), ast.name)
-
-                return o["global"][ast.name]
+                else:
+                    return o["global"][ast.name]
             else:
                 for i in range(index, -1, -1):
                     if ast.name in o["local"][i]:
@@ -194,56 +198,35 @@ class StaticChecker(Visitor):
             self.visit(VarDecl(ast.name, IntegerType(), None), o)
             return o["local"][self.local_index][ast.name]
 
-        # if "local" in o:
-        #     index = self.local_index
-        #     ids = list()
-        #     for i in range(index, -1, -1):
-        #         ids += list(filter(lambda x: x.name ==
-        #                     ast.name, o["local"][i]))
-        #     if len(ids) == 0:
-        #         idss = list(filter(lambda x: x.name == ast.name, o["global"]))
-        #         if len(idss) == 0:
-        #             raise Undeclared(Identifier(), ast.name)
-        #         return o["global"][ast.name]
-        #     for i in range(index, -1, -1):
-        #         if ast.name in o["local"][i]:
-        #             return o["local"][i][ast.name]
-        # else:
-        #     ids = list(filter(lambda x: x.name == ast.name, o["global"]))
-        #     if len(ids) == 0:
-        #         raise Undeclared(Identifier(), ast.name)
-        #     return o["global"][ast.name]
-
     def visitArrayCell(self, ast: ArrayCell, o):
-        if "local" in o:
-            index = self.local_index
-            ids = list()
-            for i in range(index, -1, -1):
-                ids += list(filter(lambda x: x.name ==
-                            ast.name, o["local"][i]))
-            if len(ids) == 0:
-                idss = list(filter(lambda x: x.name == ast.name, o["global"]))
-                if len(idss) == 0:
-                    raise Undeclared(Identifier(), ast.name)
-                arr = o["global"][ast.name]
+        if "local" not in o:
+            if ast.name not in o["global"]:
+                raise Undeclared(Variable(), ast.name)
             else:
-                for i in range(index, -1, -1):
-                    if ast.name in o["local"][i]:
-                        arr = o["local"][i][ast.name]
+                return o["global"][ast.name]
         else:
-            ids = list(filter(lambda x: x.name == ast.name, o["global"]))
-            if len(ids) == 0:
-                raise Undeclared(Identifier(), ast.name)
-            arr = o["global"][ast.name]
-
-        if type(arr.type) != ArrayType:
-            raise TypeMismatchInExpression(ast)
-
-        for cell in ast.cell:
-            espresso = self.visit(cell, o)
-            if type(espresso) != IntegerType:
+            temp = None
+            for i in range(self.local_index, -1, -1):
+                if ast.name in o["local"][i]:
+                    temp = o["local"][i][ast.name]
+            
+            if temp is None:
+                if ast.name in o["global"]:
+                    temp = o["global"][ast.name]
+                else:
+                    raise Undeclared(Variable(), o)
+            
+            if type(temp.type) != ArrayType:
                 raise TypeMismatchInExpression(ast)
-        return arr
+            
+            first_cafe = self.visit(ast.cell[0], o)
+            for cell in ast.cell:
+                espresso = self.visit(cell, o)
+                if type(espresso) != type(first_cafe) and type(first_cafe) != IntegerType:
+                    raise TypeMismatchInExpression(ast)
+            
+            return temp
+                
 
     def visitIntegerLit(self, ast: IntegerLit, o):
         return IntegerType()
@@ -258,12 +241,51 @@ class StaticChecker(Visitor):
         return BooleanType()
 
     def visitArrayLit(self, ast: ArrayLit, o):
-        type_of_array_list = [self.visit(explist, o)
-                              for explist in ast.explist]
-        for type_of_array_element in type_of_array_list:
-            if not MT22SupFunc.compare(type_of_array_element, type_of_array_element[0]):
-                raise IllegalArrayLiteral(ast)
-        return ArrayType([], type(type_of_array_element[0]))
+        if self.array_flag == False:
+            self.array_scope = ast
+            array_list = ast.explist
+            for i in array_list:
+                if not MT22SupFunc.compare(i, array_list[0]):
+                    raise IllegalArrayLiteral(ast)
+
+            size = [len(array_list)]
+
+            if type(array_list[0]) == ArrayLit:
+                self.array_flag = True
+                sub_size, sub_type = self.visit(array_list[0], o)
+                for i in array_list:
+                    sub_size_1, sub_type_1 = self.visit(i, o)
+                    if sub_size != sub_size_1 or type(sub_type) != type(sub_type_1):
+                        raise IllegalArrayLiteral(ast)
+
+                self.array_flag = False
+                size += sub_size
+            else:
+                self.array_return = self.visit(array_list[0], o)
+
+            return ArrayType(size, self.array_return)
+        else:
+            array_list = ast.explist
+
+            for i in array_list:
+                if not MT22SupFunc.compare(i, array_list[0]):
+                    raise IllegalArrayLiteral(self.array_scope)
+
+            size = [len(array_list)]
+            if type(array_list[0]) == ArrayLit:
+                sub_size, sub_type = self.visit(array_list[0], o)
+
+                for i in array_list:
+                    sub_size_1, sub_type_1 = self.visit(i, o)
+
+                    if sub_size != sub_size_1 or type(sub_type) != type(sub_type_1):
+                        raise IllegalArrayLiteral(self.array_scope)
+                size += sub_size
+
+            else:
+                self.array_return = self.visit(array_list[0], o)
+
+            return (size, self.array_return)
 
     def visitFuncCall(self, ast: FuncCall, o):
         if ast.name not in self.funclist:
@@ -312,14 +334,14 @@ class StaticChecker(Visitor):
                 return None
         # type_lhs = lhs.type
         # type_rhs = lhs
-        # print(ast.lhs)
-        # print(ast.rhs)
-        # print("\n")
-        # print(lhs)
-        # print(rhs)
-        # print("\n")
-        # print(type(lhs))
-        # print(type(rhs))
+        print(ast.lhs)
+        print(ast.rhs)
+        print("\n")
+        print(lhs)
+        print(rhs)
+        print("\n")
+        print(type(lhs))
+        print(type(rhs))
         if type(lhs) == ArrayType or type(lhs) == VoidType:
             raise TypeMismatchInStatement(ast)
         elif (type(lhs) == AutoType) and (type(rhs) == AutoType):
@@ -328,9 +350,12 @@ class StaticChecker(Visitor):
             lhs = rhs
         elif (type(lhs) != AutoType) and (type(rhs) == AutoType):
             rhs = lhs
-        elif (type(lhs) != AutoType) and (type(rhs) != AutoType):
-            if (type(lhs) != type(rhs)) and (type(lhs) != FloatType) and (type(rhs) != IntegerType):
-                raise TypeMismatchInStatement(ast)
+        elif not MT22SupFunc.compare(lhs, rhs):
+            raise TypeMismatchInStatement(ast)
+
+        # elif (type(lhs) != AutoType) and (type(rhs) != AutoType):
+        #     if (type(lhs) != type(rhs)) and (type(lhs) != FloatType and type(rhs) != IntegerType):
+        #         raise TypeMismatchInStatement(ast)
         # else:
         #     rhs = MT22SupFunc.return_type(self.visit(ast.rhs, o))
         #     self.visit(VarDecl(ast.init,IntegerType(),None),new_o_for)
@@ -462,9 +487,7 @@ class StaticChecker(Visitor):
                 raise TypeMismatchInExpression("")
             elif len(param_typ_list) < len(ast.args):
                 raise TypeMismatchInExpression(ast.args[len(param_typ_list)])
-                
-                
-                
+
                 # if type(o["global"][ast.name].type) is not (VoidType or AutoType):
                 #     raise TypeMismatchInStatement(ast)
 
@@ -482,8 +505,6 @@ class StaticChecker(Visitor):
                 if var_init is None and type(var_type) == AutoType:
                     raise Invalid(Variable(), ast.name)
                 else:
-                    # if type(var_type) == AutoType:
-                    #     var_type = var_init
                     o["global"][ast.name] = Variable_op(var_type, var_init)
             else:
                 if ast.name in o["local"][index]:
@@ -504,11 +525,13 @@ class StaticChecker(Visitor):
                     o["local"][index][ast.name] = Variable_op(
                         var_type, var_init)
 
+                    # print(o["local"][index][ast.name])
+
             # if ast.typ is FloatType:
             #     # print("lmeoasdasdasd")
             # else: raise TypeMismatchInStatement(ast)
-            # # print(var_type)
-            # # print(var_init)
+            # print(var_type)
+            # print(var_init)
             # # print(o)
             if ast.init is not None:
                 if not MT22SupFunc.compare(var_type, var_init):
@@ -599,7 +622,6 @@ class StaticChecker(Visitor):
 
 
 ########################## WHERE ITS START ##########################
-
 
     def visitProgram(self, ast: Program, o):
         o = {}

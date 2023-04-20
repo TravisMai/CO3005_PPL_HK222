@@ -52,14 +52,14 @@ class CheckerSuite(unittest.TestCase):
             foo1(2.3,"abc");
             
         }*/
+        // x: integer = 3;
         foo1: function void( x:float,inherit y: string){}
         foo:function void(t: integer, q : float) inherit foo1{
             super(1.2 , "12");
-            y: float;
+            f: array[3,2,1] of integer = {{{3}, {1}}, {{3}, {1}}, {{4}, {5}}};
+            //y = "1";
+            f[1] = {1};
             //x = readInteger();
-            for(i = 1, i < 10, i + 1){
-                
-            }
         }
         main:function void () {
             foo(1,1.2);
