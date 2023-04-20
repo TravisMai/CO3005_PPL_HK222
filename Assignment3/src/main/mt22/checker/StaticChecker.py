@@ -5,7 +5,6 @@ from functools import *
 from abc import ABC
 
 # chưa xử lý xong các thể loại Array
-# chưa check inherit first statement
 # a[2,3] = {{1,2,3},{1,2,3}}
 
 
@@ -423,33 +422,51 @@ class StaticChecker(Visitor):
         del new_o_return
 
     def visitCallStmt(self, ast: CallStmt, o):
-        if ast.name not in self.funclist:
-            if ast.name not in self.glo_envi:
-                raise Undeclared(Function(), ast)
+        if ast.name != "super":
+            if ast.name not in self.funclist:
+                if ast.name not in self.glo_envi:
+                    raise Undeclared(Function(), ast)
+                else:
+                    glo_envi_call = True
+                    call_temp = self.glo_envi[ast.name].parameter
             else:
-                glo_envi_call = True
-                call_temp = self.glo_envi[ast.name].parameter
-        else:
-            glo_envi_call = False
-            call_temp = self.funclist[ast.name].parameter
+                glo_envi_call = False
+                call_temp = self.funclist[ast.name].parameter
 
-        if len(call_temp) != len(ast.args):
-            raise TypeMismatchInStatement(ast)
-
-        param_typ_list = []
-        if glo_envi_call == False:
-            for key in call_temp:
-                param_typ_list.append(call_temp[key].typ)
-        else:
-            param_typ_list = call_temp
-
-        for i in range(len(param_typ_list)):
-            if type(param_typ_list[i]) != type(self.visit(ast.args[i], o)):
+            if len(call_temp) != len(ast.args):
                 raise TypeMismatchInStatement(ast)
 
-        # if type(o["global"][ast.name].type) is not (VoidType or AutoType):
-        #     raise TypeMismatchInStatement(ast)
+            param_typ_list = []
+            if glo_envi_call == False:
+                for key in call_temp:
+                    param_typ_list.append(call_temp[key].typ)
+            else:
+                param_typ_list = call_temp
 
+            for i in range(len(param_typ_list)):
+                if type(param_typ_list[i]) != type(self.visit(ast.args[i], o)):
+                    raise TypeMismatchInStatement(ast)
+        else:
+            call_temp = self.funclist[o["global"]
+                                      [self.current].inherit].parameter
+
+            param_typ_list = []
+            for key in call_temp:
+                param_typ_list.append(call_temp[key].typ)
+
+            if len(param_typ_list) == len(ast.args):
+                for i in range(len(param_typ_list)):
+                    if type(param_typ_list[i]) != type(self.visit(ast.args[i], o)):
+                        raise TypeMismatchInExpression(ast.args[i])
+            elif len(param_typ_list) > len(ast.args):
+                raise TypeMismatchInExpression("")
+            elif len(param_typ_list) < len(ast.args):
+                raise TypeMismatchInExpression(ast.args[len(param_typ_list)])
+                
+                
+                
+                # if type(o["global"][ast.name].type) is not (VoidType or AutoType):
+                #     raise TypeMismatchInStatement(ast)
 
 ########################## DECL ##########################
 
@@ -507,11 +524,15 @@ class StaticChecker(Visitor):
 
     def visitParamDecl(self, ast: ParamDecl, o):
         if self.func_flag == False:
-            if ast.name in o:
+            o_child, o_parent = o
+
+            if ast.name in o_parent:
+                raise Invalid(Parameter(), ast.name)
+
+            if ast.name in o_child:
                 raise Redeclared(Parameter(), ast.name)
 
-            # print(o)
-            o[ast.name] = Params_op(ast.typ, ast.out, ast.inherit)
+            o_child[ast.name] = Params_op(ast.typ, ast.out, ast.inherit)
             # còn khúc check lỗi của params
 
         else:
@@ -532,17 +553,27 @@ class StaticChecker(Visitor):
                     raise Undeclared(Function(), ast.inherit)
                 else:
                     if len(self.funclist[ast.inherit].parameter) == 0:
-                        if ast.body.body[0].name != "preventDefault":
-                            raise
+                        if type(ast.body.body[0]) != CallStmt and ast.body.body[0].name != "preventDefault":
+                            raise InvalidStatementInFunction(ast.name)
                     else:
-                        self.retrieve_inherit(
-                            self.funclist[ast.inherit].parameter, o["global"][ast.name].parameter)
+                        if type(ast.body.body[0]) != CallStmt:
+                            raise InvalidStatementInFunction(ast.name)
+                        else:
+                            if ast.body.body[0].name == "super":
+                                self.retrieve_inherit(
+                                    self.funclist[ast.inherit].parameter, o["global"][ast.name].parameter)
+                            elif ast.body.body[0].name != "preventDefault":
+                                raise InvalidStatementInFunction(ast.name)
 
             self.current = ast.name
+            new_o_param = {}
             if ast.params != []:
                 for params in ast.params:
-                    self.visit(params, o["global"][ast.name].parameter)
+                    self.visit(
+                        params, (new_o_param, o["global"][ast.name].parameter))
 
+            o["global"][ast.name].parameter.update(new_o_param)
+            del new_o_param
             # print(o["global"][ast.name].parameter)
             # print("\n")
 
@@ -550,11 +581,9 @@ class StaticChecker(Visitor):
             new_o = o.copy()
             new_o["local"] = {}
             new_o["local"][0] = {}
+            new_o["local"][0].update(o["global"][ast.name].parameter)
             for body in ast.body.body:
-                if type(body) is ReturnStmt:  # cần fix khúc này để check return type của function
-                    self.visit(body, new_o)
-                else:
-                    self.visit(body, new_o)
+                self.visit(body, new_o)
             del new_o
 
         else:
@@ -570,6 +599,7 @@ class StaticChecker(Visitor):
 
 
 ########################## WHERE ITS START ##########################
+
 
     def visitProgram(self, ast: Program, o):
         o = {}

@@ -51,20 +51,18 @@ class CheckerSuite(unittest.TestCase):
             else z = 34576;
             foo1(2.3,"abc");
             
-        }
+        }*/
         foo1: function void( x:float,inherit y: string){}
-        foo:function void(z:auto) inherit foo1{
-            x = readInteger();
+        foo:function void(t: integer, q : float) inherit foo1{
+            super(1.2 , "12");
+            y: float;
+            //x = readInteger();
             for(i = 1, i < 10, i + 1){
                 
             }
         }
-        */
-        main: function void(){
-            super(1,2);
-            
-        }
-        
-        //x:auto = "3";"""
+        main:function void () {
+            foo(1,1.2);
+        }"""
         expect = ""
         self.assertTrue(TestChecker.test(input, expect, 999))
