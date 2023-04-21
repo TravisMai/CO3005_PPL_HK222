@@ -73,7 +73,13 @@ class CheckerSuite(unittest.TestCase):
     
     def test_CS999(self):
         input = """
-        main:function void () {
+        
+        foo: function void() inherit ain{
+            super(14);
+        
+        }
+        
+        ain:function void (inherit y: auto) {
             f: array[3] of float;
             f[4.3] = 1;
         }"""
