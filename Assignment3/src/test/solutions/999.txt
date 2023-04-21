@@ -1,1 +1,1 @@
-Undeclared Function: CallStmt(foo, IntegerLit(1), FloatLit(1.2))
+Type mismatch in expression: ArrayCell(f, [FloatLit(4.3)])
