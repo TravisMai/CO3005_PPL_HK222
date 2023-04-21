@@ -28,6 +28,10 @@ class MT22SupFunc:
         elif type(typ1) == FloatType and type(typ2) == IntegerType:
             return True
         elif (type(typ2) in [IntegerType, FloatType, StringType, ArrayType, BooleanType]) and type(typ1) == AutoType:
+            typ1 = typ2
+            return True
+        elif (type(typ1) in [IntegerType, FloatType, StringType, ArrayType, BooleanType]) and type(typ2) == AutoType:
+            typ2 = typ1
             return True
         return type(typ1) == type(typ2)
 
@@ -209,24 +213,23 @@ class StaticChecker(Visitor):
             for i in range(self.local_index, -1, -1):
                 if ast.name in o["local"][i]:
                     temp = o["local"][i][ast.name]
-            
+
             if temp is None:
                 if ast.name in o["global"]:
                     temp = o["global"][ast.name]
                 else:
                     raise Undeclared(Variable(), o)
-            
+
             if type(temp.type) != ArrayType:
                 raise TypeMismatchInExpression(ast)
-            
+
             first_cafe = self.visit(ast.cell[0], o)
             for cell in ast.cell:
                 espresso = self.visit(cell, o)
                 if type(espresso) != type(first_cafe) and type(first_cafe) != IntegerType:
                     raise TypeMismatchInExpression(ast)
-            
+
             return temp
-                
 
     def visitIntegerLit(self, ast: IntegerLit, o):
         return IntegerType()
@@ -288,31 +291,71 @@ class StaticChecker(Visitor):
             return (size, self.array_return)
 
     def visitFuncCall(self, ast: FuncCall, o):
-        if ast.name not in self.funclist:
-            if ast.name not in self.glo_envi:
-                raise Undeclared(Function(), ast)
-            else:
-                glo_envi_call = True
-                call_temp = self.glo_envi[ast.name]
-        else:
+        if ast.name != "super":
             glo_envi_call = False
-            call_temp = self.funclist[ast.name]
+            if ast.name not in self.funclist:
+                if ast.name not in self.glo_envi:
+                    raise Undeclared(Function(), ast)
+                else:
+                    glo_envi_call = True
+                    call_temp = self.glo_envi[ast.name].parameter
+            else:
+                call_temp = self.funclist[ast.name].parameter
 
-        if len(call_temp.parameter) != len(ast.args):
-            raise TypeMismatchInExpression(ast)
+            if len(call_temp) != len(ast.args):
+                raise TypeMismatchInStatement(ast)
 
-        param_typ_list = []
-        if glo_envi_call == False:
-            for key in call_temp.parameter:
-                param_typ_list.append(call_temp.parameter[key].typ)
+            param_typ_list = []
+            if glo_envi_call == False:
+                for key in call_temp:
+                    param_typ_list.append(call_temp[key])
+            else:
+                param_typ_list = call_temp
+            
+            for i in range(len(param_typ_list)):
+                if glo_envi_call == False:
+                    if (type(param_typ_list[i].typ) != type(MT22SupFunc.return_type(self.visit(ast.args[i], o)))
+                            and type(param_typ_list[i].typ) != FloatType
+                            and type(MT22SupFunc.return_type(self.visit(ast.args[i], o))) != IntegerType):
+                        if type(param_typ_list[i].typ) == AutoType:
+                            param_typ_list[i].typ = MT22SupFunc.return_type(
+                                self.visit(ast.args[i], o))
+                            return self.funclist[ast.name].type
+                        else:
+                            raise TypeMismatchInStatement(ast)
+                    else:
+                        return self.funclist[ast.name].type
+                elif glo_envi_call == True:
+                    print("asdfg")
+                    if type(param_typ_list[i]) != type(MT22SupFunc.return_type(self.visit(ast.args[i], o))):
+                        raise TypeMismatchInStatement(ast)
+                    else:
+                        return self.glo_envi[ast.name].type
+            return self.glo_envi[ast.name].type
         else:
-            param_typ_list = call_temp.parameter
+            if o["global"][self.current].inherit != None:
+                call_temp = self.funclist[o["global"]
+                                          [self.current].inherit].parameter
 
-        for i in range(len(param_typ_list)):
-            if type(param_typ_list[i]) != type(self.visit(ast.args[i], o)):
-                raise TypeMismatchInExpression(ast)
+                param_typ_list = []
+                for key in call_temp:
+                    param_typ_list.append(call_temp[key].typ)
 
-        return call_temp.type
+                if len(param_typ_list) == len(ast.args):
+                    for i in range(len(param_typ_list)):
+                        if type(param_typ_list[i]) != type(MT22SupFunc.return_type(self.visit(ast.args[i], o))):
+                            raise TypeMismatchInExpression(ast.args[i])
+                elif len(param_typ_list) > len(ast.args):
+                    raise TypeMismatchInExpression("")
+                elif len(param_typ_list) < len(ast.args):
+                    raise TypeMismatchInExpression(
+                        ast.args[len(param_typ_list)])
+                
+                return self.funclist[o["global"][self.current].inherit].type
+            else:
+                raise TypeMismatchInStatement(ast)
+        
+        
 
 ########################## STATEMENT ##########################
 
@@ -334,14 +377,14 @@ class StaticChecker(Visitor):
                 return None
         # type_lhs = lhs.type
         # type_rhs = lhs
-        print(ast.lhs)
-        print(ast.rhs)
-        print("\n")
-        print(lhs)
-        print(rhs)
-        print("\n")
-        print(type(lhs))
-        print(type(rhs))
+        # print(ast.lhs)
+        # print(ast.rhs)
+        # print("\n")
+        # print(lhs)
+        # print(rhs)
+        # print("\n")
+        # print(type(lhs))
+        # print(type(rhs))
         if type(lhs) == ArrayType or type(lhs) == VoidType:
             raise TypeMismatchInStatement(ast)
         elif (type(lhs) == AutoType) and (type(rhs) == AutoType):
@@ -464,41 +507,52 @@ class StaticChecker(Visitor):
             param_typ_list = []
             if glo_envi_call == False:
                 for key in call_temp:
-                    param_typ_list.append(call_temp[key].typ)
+                    param_typ_list.append(call_temp[key])
             else:
                 param_typ_list = call_temp
 
             for i in range(len(param_typ_list)):
-                if type(param_typ_list[i]) != type(self.visit(ast.args[i], o)):
-                    raise TypeMismatchInStatement(ast)
+                if glo_envi_call == False:
+                    if (type(param_typ_list[i].typ) != type(MT22SupFunc.return_type(self.visit(ast.args[i], o)))
+                            and type(param_typ_list[i].typ) != FloatType
+                            and type(MT22SupFunc.return_type(self.visit(ast.args[i], o))) != IntegerType):
+                        if type(param_typ_list[i].typ) == AutoType:
+                            param_typ_list[i].typ = MT22SupFunc.return_type(
+                                self.visit(ast.args[i], o))
+                        else:
+                            raise TypeMismatchInStatement(ast)
+                else:
+                    if type(param_typ_list[i]) != type(MT22SupFunc.return_type(self.visit(ast.args[i], o))):
+                        raise TypeMismatchInStatement(ast)
         else:
-            call_temp = self.funclist[o["global"]
-                                      [self.current].inherit].parameter
+            if o["global"][self.current].inherit != None:
+                call_temp = self.funclist[o["global"]
+                                          [self.current].inherit].parameter
 
-            param_typ_list = []
-            for key in call_temp:
-                param_typ_list.append(call_temp[key].typ)
+                param_typ_list = []
+                for key in call_temp:
+                    param_typ_list.append(call_temp[key].typ)
 
-            if len(param_typ_list) == len(ast.args):
-                for i in range(len(param_typ_list)):
-                    if type(param_typ_list[i]) != type(self.visit(ast.args[i], o)):
-                        raise TypeMismatchInExpression(ast.args[i])
-            elif len(param_typ_list) > len(ast.args):
-                raise TypeMismatchInExpression("")
-            elif len(param_typ_list) < len(ast.args):
-                raise TypeMismatchInExpression(ast.args[len(param_typ_list)])
+                if len(param_typ_list) == len(ast.args):
+                    for i in range(len(param_typ_list)):
+                        if type(param_typ_list[i]) != type(MT22SupFunc.return_type(self.visit(ast.args[i], o))):
+                            raise TypeMismatchInExpression(ast.args[i])
+                elif len(param_typ_list) > len(ast.args):
+                    raise TypeMismatchInExpression("")
+                elif len(param_typ_list) < len(ast.args):
+                    raise TypeMismatchInExpression(
+                        ast.args[len(param_typ_list)])
+            else:
+                raise TypeMismatchInStatement(ast)
 
-                # if type(o["global"][ast.name].type) is not (VoidType or AutoType):
-                #     raise TypeMismatchInStatement(ast)
 
 ########################## DECL ##########################
 
     def visitVarDecl(self, ast: VarDecl, o):
         var_type = ast.typ
-        var_init = self.visit(ast.init, o) if ast.init else None
         if self.func_flag == False:
             index = self.local_index
-            # print(self.local_index)
+            var_init = MT22SupFunc.return_type(self.visit(ast.init, o)) if ast.init else None
             if "local" not in o:
                 if ast.name in o["global"]:
                     raise Redeclared(Variable(), ast.name)
@@ -506,6 +560,7 @@ class StaticChecker(Visitor):
                     raise Invalid(Variable(), ast.name)
                 else:
                     o["global"][ast.name] = Variable_op(var_type, var_init)
+                    initial_init = o["global"][ast.name]
             else:
                 if ast.name in o["local"][index]:
                     raise Redeclared(Variable(), ast.name)
@@ -524,26 +579,25 @@ class StaticChecker(Visitor):
                     #     var_type = var_init
                     o["local"][index][ast.name] = Variable_op(
                         var_type, var_init)
+                    initial_init = o["local"][index][ast.name]
 
                     # print(o["local"][index][ast.name])
 
-            # if ast.typ is FloatType:
-            #     # print("lmeoasdasdasd")
-            # else: raise TypeMismatchInStatement(ast)
-            # print(var_type)
-            # print(var_init)
-            # # print(o)
             if ast.init is not None:
-                if not MT22SupFunc.compare(var_type, var_init):
+                if not MT22SupFunc.compare(initial_init.type, var_init):
                     # and not MT22SupFunc.coercion(var_type, var_init, self.funclist):
                     raise TypeMismatchInVarDecl(ast)
+                
+                if type(ast.typ) == AutoType and type(var_init) in [IntegerType, FloatType, StringType, ArrayType, BooleanType]:
+                    initial_init.type = var_init
+                elif type(var_init) == AutoType and type(ast.typ) in [IntegerType, FloatType, StringType, ArrayType, BooleanType]:
+                    initial_init.type = var_init
+                print(o["global"][ast.name].type)
+            
         else:
-            if ast.name in o:
-                raise Redeclared(Variable(), ast.name)
+            if ast.name not in o:
+                o[ast.name] = Variable_op(var_type, None)
 
-            o[ast.name] = Variable_op(var_type, var_init)
-
-        # print(o)
 
     def visitParamDecl(self, ast: ParamDecl, o):
         if self.func_flag == False:
@@ -559,10 +613,9 @@ class StaticChecker(Visitor):
             # còn khúc check lỗi của params
 
         else:
-            if ast.name in o:
-                raise Redeclared(Parameter(), ast.name)
-
-            o[ast.name] = Params_op(ast.typ, ast.out, ast.inherit)
+            if ast.name not in o:
+                o[ast.name] = Params_op(ast.typ, ast.out, ast.inherit)
+                # raise Redeclared(Parameter(), ast.name)
 
     def visitFuncDecl(self, ast: FuncDecl, o):
         if self.func_flag == False:
@@ -610,13 +663,11 @@ class StaticChecker(Visitor):
             del new_o
 
         else:
-            if ast.name in o:
-                raise Redeclared(Function(), ast.name)
-
-            o[ast.name] = Function_op(ast.return_type, None)
-            if ast.params != []:
-                for params in ast.params:
-                    self.visit(params, o[ast.name].parameter)
+            if ast.name not in o:
+                o[ast.name] = Function_op(ast.return_type, None)
+                if ast.params != []:
+                    for params in ast.params:
+                        self.visit(params, o[ast.name].parameter)
 
             # # print(o[ast.name].parameter)
 
