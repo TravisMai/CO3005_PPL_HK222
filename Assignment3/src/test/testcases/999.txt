@@ -5,7 +5,7 @@
             super(3);
             b = 1;
         }
-        aaa: function float(inherit a: integer) inherit bbb{
+        aaa: function float(inherit b: integer) inherit bbb{
             super(2,1);
             b = 1;
         }

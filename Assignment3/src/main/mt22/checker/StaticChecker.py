@@ -89,13 +89,16 @@ class StaticChecker(Visitor):
             return_temp = self.hierarchical_recur(self.funclist[grandma.inherit])
             for i in grandma.parameter:
                 if grandma.parameter[i].inherit == True:
-                    temp[i] = grandma.parameter[i]
+                    if i in temp:
+                        raise Redeclared(Parameter(), i)
+                    else:
+                        temp[i] = grandma.parameter[i]
             
             for key, value in return_temp.items():
                 try:
                     temp.update({key: value})
                 except ValueError:
-                    raise Redeclared(Parameter(), key)  
+                    raise Invalid(Parameter(), key)  
 
             return temp
         else:
