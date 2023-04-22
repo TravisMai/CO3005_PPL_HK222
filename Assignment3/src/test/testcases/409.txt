@@ -4,5 +4,6 @@
         }
         ain:function void (inherit y: auto) {
             f: array[3] of float;
-            f[4.3] = 1;
+        }
+        main: function void(){        
         }

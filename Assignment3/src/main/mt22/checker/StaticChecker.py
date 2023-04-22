@@ -4,8 +4,6 @@ from StaticError import *
 from functools import *
 from abc import ABC
 
-# còn kiểu trả về của array cell
-
 
 class MT22SupFunc:
     @staticmethod
@@ -73,8 +71,6 @@ class Glo_func:
 
 
 class StaticChecker(Visitor):
-
-    ########################## LOCAL PART OF CLASS ##########################
 
     def enter_loop(self):
         self.in_loop += 1
@@ -155,8 +151,7 @@ class StaticChecker(Visitor):
                 or (type(lhs), type(rhs)) == (FloatType, IntegerType)
                 or (type(lhs), type(rhs)) == (IntegerType, FloatType)
                 or (type(lhs), type(rhs)) == (FloatType, FloatType)
-                or (((type(lhs), type(rhs)) == (IntegerType, IntegerType)
-                     or (type(lhs), type(rhs)) == (BooleanType, BooleanType))
+                or ((type(lhs), type(rhs)) == (BooleanType, BooleanType)
                     and (ast.op in ["==", "!="]))):
                 return BooleanType()
             else:
@@ -197,7 +192,7 @@ class StaticChecker(Visitor):
     def visitArrayCell(self, ast: ArrayCell, o):
         if "local" not in o:
             if ast.name not in o["global"]:
-                raise Undeclared(Variable(), ast.name)
+                raise Undeclared(Identifier(), ast.name)
             else:
                 return o["global"][ast.name]
         else:
@@ -210,17 +205,20 @@ class StaticChecker(Visitor):
                 if ast.name in o["global"]:
                     temp = o["global"][ast.name]
                 else:
-                    raise Undeclared(Variable(), o)
+                    raise Undeclared(Identifier(), o)
 
             if type(temp.type) != ArrayType:
                 raise TypeMismatchInExpression(ast)
 
-            first_cafe = self.visit(ast.cell[0], o)
+            first_cafe = MT22SupFunc.return_type(self.visit(ast.cell[0], o))
 
             for cell in ast.cell:
                 espresso = self.visit(cell, o)
-                if type(espresso) != type(first_cafe) or type(first_cafe) != IntegerType:
+                if type(MT22SupFunc.return_type(espresso)) != type(first_cafe) or type(first_cafe) != IntegerType:
                     raise TypeMismatchInExpression(ast)
+
+            if (len(temp.type.dimensions) == len(ast.cell)):
+                return temp.type.typ
 
             return temp
 
@@ -288,7 +286,7 @@ class StaticChecker(Visitor):
             glo_envi_call = False
             if ast.name not in self.funclist:
                 if ast.name not in self.glo_envi:
-                    raise Undeclared(Function(), ast)
+                    raise Undeclared(Function(), ast.name)
                 else:
                     glo_envi_call = True
                     call_temp = self.glo_envi[ast.name].parameter
@@ -354,15 +352,8 @@ class StaticChecker(Visitor):
 
 ########################## STATEMENT ##########################
 
-    def visitAssignStmt(self, ast: AssignStmt, o):
-        # if type(ast.rhs) == CallStmt or type(ast.rhs) == ArrayCell:
-        #     rhs = self.visit(ast.rhs, o)
-        #     type_rhs = type(rhs)
-        # else:
-        #     rhs = ast.rhs.accept(self, o)
-        #     type_rhs = rhs
 
-        # if self.for_flag == False:
+    def visitAssignStmt(self, ast: AssignStmt, o):
         lhs = MT22SupFunc.return_type(self.visit(ast.lhs, o))
         rhs = MT22SupFunc.return_type(self.visit(ast.rhs, o))
         if self.for_flag == True:
@@ -370,16 +361,14 @@ class StaticChecker(Visitor):
                 return lhs
             else:
                 return None
-        # type_lhs = lhs.type
-        # type_rhs = lhs
-        # print(ast.lhs)
-        # print(ast.rhs)
-        # print("\n")
-        # print(lhs)
-        # print(rhs)
-        # print("\n")
-        # print(type(lhs))
-        # print(type(rhs))
+        print(ast.lhs)
+        print(ast.rhs)
+        print("\n")
+        print(lhs)
+        print(rhs)
+        print("\n")
+        print(type(lhs))
+        print(type(rhs))
         if type(lhs) == ArrayType or type(lhs) == VoidType:
             raise TypeMismatchInStatement(ast)
         # elif (type(lhs) == AutoType) and (type(rhs) == AutoType):
@@ -401,8 +390,6 @@ class StaticChecker(Visitor):
 
     def visitBlockStmt(self, ast: BlockStmt, o):
         self.enter_scope()
-        # print(index)
-        # print(self.local_index)
         new_o_block = o.copy()
         new_o_block["local"][self.local_index] = {}
         for body in ast.body:
@@ -412,8 +399,10 @@ class StaticChecker(Visitor):
         self.exit_scope()
 
     def visitIfStmt(self, ast: IfStmt, o):
+        self.enter_scope()
         new_o_if = o.copy()
-        condition = MT22SupFunc.return_type(self.visit(ast.cond, o))
+        new_o_if["local"][self.local_index] = {}
+        condition = MT22SupFunc.return_type(self.visit(ast.cond, new_o_if))
         if type(condition) != BooleanType:
             raise TypeMismatchInStatement(ast)
 
@@ -422,6 +411,7 @@ class StaticChecker(Visitor):
             self.visit(ast.fstmt, new_o_if)
 
         del new_o_if
+        self.exit_scope()
 
     def visitForStmt(self, ast: ForStmt, o):
         self.enter_loop()
@@ -445,16 +435,19 @@ class StaticChecker(Visitor):
 
     def visitWhileStmt(self, ast: WhileStmt, o):
         self.enter_loop()
+        self.enter_scope()
         new_o_while = o.copy()
+        new_o_while["local"][self.local_index] = {}
         condition = MT22SupFunc.return_type(self.visit(ast.cond, new_o_while))
         if type(condition) != BooleanType:
             raise TypeMismatchInStatement(ast)
 
         self.visit(ast.stmt, new_o_while)
         del new_o_while
+        self.exit_scope()
         self.exit_loop()
 
-    def visitDoWhileStmt(self, ast, o):
+    def visitDoWhileStmt(self, ast: DoWhileStmt, o):
         self.enter_loop()
         new_o_do_while = o.copy()
         condition = MT22SupFunc.return_type(
@@ -498,10 +491,40 @@ class StaticChecker(Visitor):
             del new_o_return
 
     def visitCallStmt(self, ast: CallStmt, o):
-        if ast.name != "super":
+        if ast.name == "super":
+            if o["global"][self.current].inherit != None:
+                call_temp = self.funclist[o["global"]
+                                          [self.current].inherit].parameter
+
+                param_typ_list = []
+                for key in call_temp:
+                    param_typ_list.append(call_temp[key].typ)
+
+                if len(param_typ_list) == len(ast.args):
+                    for i in range(len(param_typ_list)):
+                        if type(param_typ_list[i]) != type(MT22SupFunc.return_type(self.visit(ast.args[i], o))):
+                            if type(param_typ_list[i]) == FloatType and type(MT22SupFunc.return_type(self.visit(ast.args[i], o))) == IntegerType:
+                                pass
+                            elif type(param_typ_list[i]) == AutoType or type(MT22SupFunc.return_type(self.visit(ast.args[i], o))) == AutoType:
+                                pass
+                            else:
+                                raise TypeMismatchInExpression(ast.args[i])
+                        else:
+                            pass
+                elif len(param_typ_list) > len(ast.args):
+                    raise TypeMismatchInExpression("")
+                elif len(param_typ_list) < len(ast.args):
+                    raise TypeMismatchInExpression(
+                        ast.args[len(param_typ_list)])
+            else:
+                raise TypeMismatchInStatement(ast)
+        elif ast.name == "preventDefault":
+            if len(ast.args) > 0:
+                raise TypeMismatchInExpression(ast.args[0])
+        else:
             if ast.name not in self.funclist:
                 if ast.name not in self.glo_envi:
-                    raise Undeclared(Function(), ast)
+                    raise Undeclared(Function(), ast.name)
                 else:
                     glo_envi_call = True
                     call_temp = self.glo_envi[ast.name].parameter
@@ -533,36 +556,10 @@ class StaticChecker(Visitor):
                 else:
                     if type(param_typ_list[i]) != type(MT22SupFunc.return_type(self.visit(ast.args[i], o))):
                         raise TypeMismatchInStatement(ast)
-        else:
-            if o["global"][self.current].inherit != None:
-                call_temp = self.funclist[o["global"]
-                                          [self.current].inherit].parameter
-
-                param_typ_list = []
-                for key in call_temp:
-                    param_typ_list.append(call_temp[key].typ)
-
-                if len(param_typ_list) == len(ast.args):
-                    for i in range(len(param_typ_list)):
-                        if type(param_typ_list[i]) != type(MT22SupFunc.return_type(self.visit(ast.args[i], o))):
-                            if type(param_typ_list[i]) == FloatType and type(MT22SupFunc.return_type(self.visit(ast.args[i], o)) == IntegerType):
-                                pass
-                            elif type(param_typ_list[i]) == AutoType or type(MT22SupFunc.return_type(self.visit(ast.args[i], o))) == AutoType:
-                                pass
-                            else:
-                                raise TypeMismatchInExpression(ast.args[i])
-                        else:
-                            pass
-                elif len(param_typ_list) > len(ast.args):
-                    raise TypeMismatchInExpression("")
-                elif len(param_typ_list) < len(ast.args):
-                    raise TypeMismatchInExpression(
-                        ast.args[len(param_typ_list)])
-            else:
-                raise TypeMismatchInStatement(ast)
 
 
 ########################## DECL ##########################
+
 
     def visitVarDecl(self, ast: VarDecl, o):
         var_type = ast.typ
@@ -602,16 +599,13 @@ class StaticChecker(Visitor):
 
             if ast.init is not None:
                 if not MT22SupFunc.compare(initial_init.type, var_init):
-                    # and not MT22SupFunc.coercion(var_type, var_init, self.funclist):
-                    raise TypeMismatchInVarDecl(ast)
-
-                if type(ast.typ) == AutoType and type(var_init) in [IntegerType, FloatType, StringType, ArrayType, BooleanType]:
-                    initial_init.type = var_init
-                elif type(var_init) == AutoType and type(ast.typ) in [IntegerType, FloatType, StringType, ArrayType, BooleanType]:
-                    temp = self.visit(ast.init, o)
-                    temp.type = ast.typ
-                else:
-                    raise TypeMismatchInVarDecl(ast)
+                    if type(ast.typ) == AutoType and type(var_init) in [IntegerType, FloatType, StringType, ArrayType, BooleanType]:
+                        initial_init.type = var_init
+                    elif type(var_init) == AutoType and type(ast.typ) in [IntegerType, FloatType, StringType, ArrayType, BooleanType]:
+                        temp = self.visit(ast.init, o)
+                        temp.type = ast.typ
+                    else:
+                        raise TypeMismatchInVarDecl(ast)
                 # print(self.funclist["foo2"].type)
 
         else:
@@ -629,7 +623,6 @@ class StaticChecker(Visitor):
                 raise Redeclared(Parameter(), ast.name)
 
             o_child[ast.name] = Params_op(ast.typ, ast.out, ast.inherit)
-            # còn khúc check lỗi của params
 
         else:
             if ast.name not in o:
@@ -705,6 +698,7 @@ class StaticChecker(Visitor):
 
 
 ########################## WHERE ITS START ##########################
+
 
     def visitProgram(self, ast: Program, o):
         o = {}
