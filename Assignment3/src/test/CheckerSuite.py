@@ -468,7 +468,7 @@ class CheckerSuite(unittest.TestCase):
                 x = printInteger();
             } while (boo()/10*345.6+4 > 0);
         }"""
-        expect = "Type mismatch in statement: FuncCall(printInteger, [])"
+        expect = "Type mismatch in expression: FuncCall(printInteger, [])"
         self.assertTrue(TestChecker.test(input, expect, 438))
         
     def test_SC439(self):
@@ -629,27 +629,160 @@ class CheckerSuite(unittest.TestCase):
             return "ashjdgkf";
         }"""
         expect = "Type mismatch in statement: ReturnStmt(StringLit())"
-        self.assertTrue(TestChecker.test(input, expect, 999))
+        self.assertTrue(TestChecker.test(input, expect, 449))
+        
+    def test_SC450(self):
+        input = """
+        f:array[1,2,3] of float;
+        g: array[1,2,3] of integer = f;"""
+        expect = "Type mismatch in Variable Declaration: VarDecl(g, ArrayType([1, 2, 3], IntegerType), Id(f))"
+        self.assertTrue(TestChecker.test(input, expect, 450))
+        
+    def test_SC451(self):
+        input = """
+        f:array[1,2,3] of integer;
+        g: array[1,2,3] of float = f;"""
+        expect = "No entry point"
+        self.assertTrue(TestChecker.test(input, expect, 451))
+        
+    def test_SC452(self):
+        input = """
+        x: integer = 3;
+        foo1: function void( x:float,inherit y: string){}
+        foo2: function auto(){return 2.3;}
+        main:function void () {
+            n: integer;
+            x,y,z: float;
+            {
+                {
 
+                }
+                x = n;
+            }
+            if((x<y) && (y < 9) && (z != 10)) z = 456;
+            else z = 34576;
+            foo1(2.3,"abc");
+        }
+        """
+        expect = ""
+        self.assertTrue(TestChecker.test(input, expect, 452))
+        
+    def test_SC453(self):
+        input = """
+        main:function void () {}
+        poo: function void(n: auto) {
+            n = 1;
+            if(n>0) n = n + 1;
+        }
+        """
+        expect = ""
+        self.assertTrue(TestChecker.test(input, expect, 453))
+    
+    def test_SC454(self):
+        input = """
+        poo: function auto(n: auto) {
+            n = 1;
+            if(n>0) n = n + 1;
+        }
+        main:function void () {
+            x: integer = 1;
+            x = poo(1);
+            
+        }
+        """
+        expect = ""
+        self.assertTrue(TestChecker.test(input, expect, 454))
+        
+    def test_SC455(self):
+        input = """
+        main:function void () {
+            x: integer = 1;
+            x = poo(1);
+            
+        }
+        poo: function auto(n: auto) {
+            //n = 1;
+            if(n>0) n = n + 1;
+        }
+        """
+        expect = ""
+        self.assertTrue(TestChecker.test(input, expect, 455))
+    
+    def test_SC456(self):
+        input = """
+        main:function void () {
+            x: integer = 1;
+            x = poo(1);
+            
+        }
+        poo: function auto(n: auto) {
+            //n = 1;
+            if(n>0) n = n + 1;
+        }
+        boo: function void(){
+            if (poo("1") < 10){
+                printInteger(poo(1));
+            }
+        }
+        """
+        expect = "Type mismatch in expression: FuncCall(poo, [StringLit(1)])"
+        self.assertTrue(TestChecker.test(input, expect, 456))
+    
+    def test_SC457(self):
+        input = """
+        main:function void () {
+            x: integer = 1;
+            hehe(poo(""),"");
+        }
+        hehe: function float(x: integer, y : string){}
+        poo: function auto(n: auto) {
+            //n = 1;
+            if(n>0) n = n + 1;
+        }
+        boo: function void(){
+            if (poo("1") < 10){
+                printInteger(poo(1));
+            }
+        }
+        """
+        expect = "Type mismatch in expression: BinExpr(>, Id(n), IntegerLit(0))"
+        self.assertTrue(TestChecker.test(input, expect, 457))
+        
+    def test_SC458(self):
+        input = """
+        main:function void () {
+        }
+        hehe: function float(x: integer, y : string){
+            x = 1;
+            
+        }
+        """
+        expect = ""
+        self.assertTrue(TestChecker.test(input, expect, 458))
+        
+    def test_SC459(self):
+        input = """
+        main:function void () {
+        }
+        hehe: function float(inherit x: integer, y : string) inherit aaa{
+            super(3);
+            b = 1;
+        }
+        aaa: function float(inherit a: integer) inherit bbb{
+            super(2,1);
+            b = 1;
+        }
+        bbb: function float(inherit b: integer, inherit c: float){
+            
+        }
+        """
+        expect = ""
+        self.assertTrue(TestChecker.test(input, expect, 999))
+        
+        
     # def test_SC999(self):
     #     input = """/*
-    #     x: integer = 3;
-    #     //foo1: function void( x:float,inherit y: string){}
-    #     foo2: function auto(){return 2.3;}
-    #     main:function void () {
-    #         n: integer;
-    #         x,y,z: float;
-    #         {
-    #             {
-
-    #             }
-    #             x = n;
-    #         }
-    #         if((x<y) && (y < 9) && (z != 10)) z = 456;
-    #         else z = 34576;
-    #         foo1(2.3,"abc");
-
-    #     }*/
+        
     #     x: auto = foo2(2);
     #     //foo1: function void( x:float,inherit y: string){}
     #     foo2: function integer(b:auto){}
