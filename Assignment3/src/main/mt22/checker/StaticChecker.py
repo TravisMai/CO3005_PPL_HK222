@@ -170,24 +170,24 @@ class StaticChecker(Visitor):
 
     def visitId(self, ast: Id, o):
         index = self.local_index
-        if self.for_flag == False:
-            if "local" not in o:
-                if ast.name not in o["global"]:
-                    raise Undeclared(Identifier(), ast.name)
-                else:
-                    return o["global"][ast.name]
-            else:
-                for i in range(index, -1, -1):
-                    if ast.name in o["local"][i]:
-                        return o["local"][i][ast.name]
-
-                if ast.name in o["global"]:
-                    return o["global"][ast.name]
-
+        # if self.for_flag == False:
+        if "local" not in o:
+            if ast.name not in o["global"]:
                 raise Undeclared(Identifier(), ast.name)
+            else:
+                return o["global"][ast.name]
         else:
-            self.visit(VarDecl(ast.name, IntegerType(), None), o)
-            return o["local"][self.local_index][ast.name]
+            for i in range(index, -1, -1):
+                if ast.name in o["local"][i]:
+                    return o["local"][i][ast.name]
+
+            if ast.name in o["global"]:
+                return o["global"][ast.name]
+
+            raise Undeclared(Identifier(), ast.name)
+        # else:
+        #     self.visit(VarDecl(ast.name, IntegerType(), None), o)
+        #     return o["local"][self.local_index][ast.name]
 
     def visitArrayCell(self, ast: ArrayCell, o):
         if "local" not in o:
@@ -356,19 +356,19 @@ class StaticChecker(Visitor):
     def visitAssignStmt(self, ast: AssignStmt, o):
         lhs = MT22SupFunc.return_type(self.visit(ast.lhs, o))
         rhs = MT22SupFunc.return_type(self.visit(ast.rhs, o))
-        if self.for_flag == True:
-            if type(lhs) == type(rhs):
-                return lhs
-            else:
-                return None
-        print(ast.lhs)
-        print(ast.rhs)
-        print("\n")
-        print(lhs)
-        print(rhs)
-        print("\n")
-        print(type(lhs))
-        print(type(rhs))
+        # if self.for_flag == True:
+        #     if type(lhs) == type(rhs):
+        #         return lhs
+        #     else:
+        #         return None
+        # print(ast.lhs)
+        # print(ast.rhs)
+        # print("\n")
+        # print(lhs)
+        # print(rhs)
+        # print("\n")
+        # print(type(lhs))
+        # print(type(rhs))
         if type(lhs) == ArrayType or type(lhs) == VoidType:
             raise TypeMismatchInStatement(ast)
         # elif (type(lhs) == AutoType) and (type(rhs) == AutoType):
@@ -379,14 +379,11 @@ class StaticChecker(Visitor):
             rhs = lhs
         elif not MT22SupFunc.compare(lhs, rhs):
             raise TypeMismatchInStatement(ast)
-
-        # elif (type(lhs) != AutoType) and (type(rhs) != AutoType):
-        #     if (type(lhs) != type(rhs)) and (type(lhs) != FloatType and type(rhs) != IntegerType):
-        #         raise TypeMismatchInStatement(ast)
-        # else:
-        #     rhs = MT22SupFunc.return_type(self.visit(ast.rhs, o))
-        #     self.visit(VarDecl(ast.init,IntegerType(),None),new_o_for)
-        #     return rhs
+        elif self.for_flag == True:
+            if type(lhs) == type(rhs):
+                return lhs
+            else:
+                return None
 
     def visitBlockStmt(self, ast: BlockStmt, o):
         self.enter_scope()
@@ -487,7 +484,6 @@ class StaticChecker(Visitor):
             if return_type is not None:
                 if not MT22SupFunc.compare(o["global"][self.current].type, return_type):
                     raise TypeMismatchInStatement(ast)
-            self.return_flag = True
             del new_o_return
 
     def visitCallStmt(self, ast: CallStmt, o):
@@ -675,6 +671,7 @@ class StaticChecker(Visitor):
             # print("\n")
 
             self.local_index = 0
+            self.return_flag = False
             new_o = o.copy()
             new_o["local"] = {}
             new_o["local"][0] = {}

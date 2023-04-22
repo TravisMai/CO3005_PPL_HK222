@@ -1,12 +1,11 @@
 
         pool: function void() inherit foo{
             super(1);
+            while(boo()>0) continue;
         }
         boo: function integer(){
             return 1;
         }
         foo: function float(x: integer){
-            if(x == 1) return 1;
-            return "";
-            return "ashjdgkf";
+            while ( x < 10) break;
         }
