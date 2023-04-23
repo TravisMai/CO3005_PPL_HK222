@@ -1,15 +1,7 @@
 
-        main:function void () {
-        }
-        hehe: function float(inherit x: integer, y : string) inherit aaa{
-            super(3);
-            b = 1;
-        }
-        aaa: function float(inherit b: integer) inherit bbb{
-            super(2,1);
-            b = 1;
-        }
-        bbb: function float(inherit b: integer, inherit c: float){
-            
-        }
+            main: function void(){}
+            foo1: function boolean(inherit a:auto, inherit b: auto,inherit c: integer, d:float, e:string){}
+            foo9: function string (c:auto, d:auto, e:auto) inherit foo1{
+                super(1152,2.3,c,d,e);
+            }
         
