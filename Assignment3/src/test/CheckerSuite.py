@@ -920,7 +920,7 @@ class CheckerSuite(unittest.TestCase):
                 printBoolean(a);
             }
         }"""
-        expect = ""
+        expect = "Type mismatch in statement: CallStmt(foo, BooleanLit(True), BooleanLit(False))"
         self.assertTrue(TestChecker.test(input, expect, 468))
 
     def test_SC469(self):
